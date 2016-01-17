@@ -1,5 +1,5 @@
-import hr.fer.zemris.evolution_algorithm.GeneticAlgorithm;
-import hr.fer.zemris.evolution_algorithm.task_info.TaskInfo;
+import hr.fer.tki.evolution_algorithm.GeneticAlgorithm;
+import hr.fer.tki.evolution_algorithm.task_info.TaskInfo;
 
 public class Main1 {
 
