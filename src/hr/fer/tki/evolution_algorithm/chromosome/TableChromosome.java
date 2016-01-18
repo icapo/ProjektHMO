@@ -17,14 +17,6 @@ public class TableChromosome implements IChromosome {
 		this.data = data;
 	}
 
-	public String[][] getElements() {
-		return this.data;
-	}
-
-	public void setElements(String[][] elements) {
-		this.data = elements;
-	}
-
 	public Object getChromosomeElement(int row, int col) {
 		return this.data[row][col];
 	}
@@ -43,5 +35,13 @@ public class TableChromosome implements IChromosome {
 
 	public void setFitness(double value) {
 		this.fitness = value;
+	}
+
+	public int getRowsNum() {
+		return this.data.length;
+	}
+
+	public int getColsNum() {
+		return this.data[0].length;
 	}
 }

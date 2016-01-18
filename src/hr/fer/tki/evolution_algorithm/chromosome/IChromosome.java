@@ -3,13 +3,13 @@ package hr.fer.tki.evolution_algorithm.chromosome;
 
 public interface IChromosome {
 	
-	public String[][] getElements();
-
-	public void setElements(String[][] elements);
-	
 	Object getChromosomeElement(int row, int col);
 	
 	void setChromosomeElement(int row, int col, String value);
+	
+	public int getRowsNum();
+	
+	public int getColsNum();
 	
 	IChromosome copy();
 	

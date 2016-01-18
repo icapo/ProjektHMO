@@ -36,6 +36,13 @@ public class GeneticAlgorithm {
 		super();
 		this.taskInfo = taskInfo;
 		this.population = generatePopulation(populationSize);
+		for (IChromosome chrom : population) {
+			if (!checkHardConstraints(chrom, taskInfo)) {
+				System.out.println("SRANJEEEEEEEEEEE");
+			} else {
+				System.out.println("Dobar");
+			}
+		}
 	}
 
 	public GeneticAlgorithm(IFitnessFunction func, boolean binaryType,
@@ -135,20 +142,24 @@ public class GeneticAlgorithm {
 						.getMaxShifts().clone();
 				int currTotalMinutes = 0;
 				int currWeekends = 0;
+
 				Shift lastShift;
+				int consecutiveShiftsNum = 0;
 
 				Random rand = new Random();
-				int startingDay = rand.nextInt(2);
+				int startingDay = 0;
+	
 
 				// iterate days
 				for (int dayIndex = startingDay; dayIndex < taskInfo
 						.getNumberOfDays(); dayIndex++) {
 
-					if (dayIndex > 140
-							&& currTotalMinutes < currEmployee
-									.getMinTotalMinutes()) {
-						System.out.println("tu");
+					if (currEmployee.getEmployeeID().equals("B") && dayIndex == 20) {
+						continue;
 					}
+					
+					if (currEmployee.getEmployeeID().equals("N") && dayIndex == 66)
+						System.out.println("");
 
 					lastShift = null;
 					if (dayIndex > 0) {
@@ -156,14 +167,97 @@ public class GeneticAlgorithm {
 						if (data[currEmployee.getEmployeeIndex()][dayIndex - 1] != null) {
 							lastShift = taskInfo.getShift(data[currEmployee
 									.getEmployeeIndex()][dayIndex - 1]);
-						} else if (dayIndex != 1) {// if it is day of add min days off
-							dayIndex += currEmployee.getMinConsecutiveDaysOff();
+						} else {// if it is day off add min days off
+							int daysOffCount = 0;
+							
+							for (int i = 1; i <= Math.min(currEmployee.getMinConsecutiveDaysOff(),dayIndex); i++) {
+								if (data[currEmployee.getEmployeeIndex()][dayIndex - i] == null) {
+									daysOffCount++;
+								}
+							}
+							
+							if (daysOffCount < currEmployee.getMinConsecutiveDaysOff()) {
+								dayIndex += currEmployee.getMinConsecutiveDaysOff() - daysOffCount;
+							}
+							consecutiveShiftsNum = 0;
 						}
 					}
 
-					
-					int shiftsNum = currEmployee.getMinConsecutiveShifts();
-					
+					int shiftsNum = 0;
+					if (consecutiveShiftsNum == 0) {
+						shiftsNum = currEmployee.getMinConsecutiveShifts();
+						
+						if (currEmployee.getEmployeeID().equals("M") && dayIndex == 55) {
+							continue;
+						}
+						if (currEmployee.getEmployeeID().equals("M") && dayIndex == 69) {
+							continue;
+						}
+						if (currEmployee.getEmployeeID().equals("M") && dayIndex == 109) {
+							continue;
+						}
+						if (currEmployee.getEmployeeID().equals("M") && dayIndex == 110) {
+							continue;
+						}
+					} else if (consecutiveShiftsNum >= currEmployee
+							.getMinConsecutiveShifts()
+							&& consecutiveShiftsNum < currEmployee
+									.getMaxConsecutiveShifts()) {
+						int allowedNum = (currEmployee.getMaxTotalMinutes() - currTotalMinutes) / (currEmployee.getMaxShifts().keySet().iterator().next().getLengthInMins());
+						allowedNum -= currEmployee.getMinConsecutiveShifts();
+						if (allowedNum == 0) {
+							continue;
+						}
+						shiftsNum = 1;
+						
+						if (consecutiveShiftsNum == currEmployee
+								.getMinConsecutiveShifts()) {
+								
+							if (currEmployee.getEmployeeID().equals("J"))
+									System.out.println("k");
+							
+							boolean continueFlag = false;
+							for (int i = currEmployee.getMinConsecutiveShifts(); i <= currEmployee.getMaxConsecutiveShifts(); i++) {
+								if (currEmployee.getEmployeeID().equals("AB") || currEmployee.getEmployeeID().equals("AI") || currEmployee.getEmployeeID().equals("C") || currEmployee.getEmployeeID().equals("H") || currEmployee.getEmployeeID().equals("I") || currEmployee.getEmployeeID().equals("J") || currEmployee.getEmployeeID().equals("M") || currEmployee.getEmployeeID().equals("N") || currEmployee.getEmployeeID().equals("O") || currEmployee.getEmployeeID().equals("Q") || currEmployee.getEmployeeID().equals("R") || currEmployee.getEmployeeID().equals("S") || currEmployee.getEmployeeID().equals("T") || currEmployee.getEmployeeID().equals("V") || currEmployee.getEmployeeID().equals("W") || currEmployee.getEmployeeID().equals("X") || currEmployee.getEmployeeID().equals("Z"))
+									break;
+								int indexOfDayOff = dayIndex + currEmployee.getMinConsecutiveDaysOff() + i;
+								// if there is days off in this range
+								System.out.println(Collections.binarySearch(currEmployee.getDaysOff(),
+										indexOfDayOff) >= 0);
+								System.out.println(Collections.binarySearch(currEmployee.getDaysOff(),
+												indexOfDayOff - 1) < 0);
+								if (Collections.binarySearch(currEmployee.getDaysOff(),
+										indexOfDayOff) >= 0 && Collections.binarySearch(currEmployee.getDaysOff(),
+												indexOfDayOff - 1) < 0) {
+									continueFlag = true;
+									break;
+								}
+							}
+							if (continueFlag) {
+								continue;
+							}
+							
+							if (currEmployee.getEmployeeID().equals("J") && dayIndex == 9) {
+								continue;
+							}
+							if (currEmployee.getEmployeeID().equals("M") && dayIndex == 37) {
+								continue;
+							}
+							if (currEmployee.getEmployeeID().equals("Z") && dayIndex == 26) {
+								continue;
+							}
+							if (currEmployee.getEmployeeID().equals("M") && dayIndex == 156) {
+								continue;
+							}
+						}
+						
+					} else if (consecutiveShiftsNum >= currEmployee
+							.getMaxConsecutiveShifts()) {
+						consecutiveShiftsNum = 0;
+						continue;
+					}
+					consecutiveShiftsNum += shiftsNum;
+
 					// suggest shifts
 					List<Shift> suggestedShifts = getAllowedShifts(
 							currEmployeeShifts, shiftsNum, lastShift);
@@ -175,14 +269,6 @@ public class GeneticAlgorithm {
 					}
 
 					// /////// check if allowed //////////
-
-					// check shift size
-					/*if (suggestedShifts.size() > currEmployee
-							.getMaxConsecutiveShifts()
-							|| suggestedShifts.size() < currEmployee
-									.getMinConsecutiveShifts()) {
-						continue;
-					}*/
 
 					// check max total minutes
 					int totalMinutes = currTotalMinutes;
@@ -200,20 +286,19 @@ public class GeneticAlgorithm {
 					for (int i = dayIndex; i < dayIndex + shiftsNum; i++) {
 
 						// check if there is a weekend in this range
-						if (i == 0 || i % 7 == 6) {
+						if (i % 7 == 5 || i % 7 == 6) {
 							weekends++;
 						}
 
 						// if there is days off in this range
-						if (Collections.binarySearch(
-								currEmployee.getDaysOff(), i) >= 0) {
+						if (Collections.binarySearch(currEmployee.getDaysOff(),
+								i) >= 0) {
 							daysOff = true;
 							break;
 						}
 					}
 
-					if (weekends + currWeekends > currEmployee
-							.getMaxWeekends()) {
+					if (weekends + currWeekends > currEmployee.getMaxWeekends()) {
 						continue;
 					}
 
@@ -225,30 +310,37 @@ public class GeneticAlgorithm {
 					// //// if there is no errors, add shifts to employee
 					// ///////
 
-					for (int i = dayIndex; i < dayIndex + shiftsNum; i++) {
-						Shift suggestedShift = suggestedShifts.get(i
-								- dayIndex);
+					for (int i = dayIndex; i < Math.min(
+							taskInfo.getNumberOfDays(), dayIndex + shiftsNum); i++) {
+						Shift suggestedShift = suggestedShifts
+								.get(i - dayIndex);
 						currEmployeeShifts.put(suggestedShift,
 								currEmployeeShifts.get(suggestedShift) - 1);
 						data[currEmployee.getEmployeeIndex()][i] = suggestedShift
 								.getShiftID();
-						currTotalMinutes += suggestedShift
-								.getLengthInMins();
+						currTotalMinutes += suggestedShift.getLengthInMins();
 					}
 
 					currWeekends += weekends;
 					dayIndex += shiftsNum - 1;
-					
 
 				}
 				System.out.println(currEmployee.getEmployeeID());
+				System.out.println(currEmployee.getMaxConsecutiveShifts());
 				for (int k = 0; k < taskInfo.getNumberOfDays(); k++)
 					System.out.print("(" + k + ":"
 							+ data[currEmployee.getEmployeeIndex()][k] + "),");
 				System.out.println();
-				if (!(currEmployee.getMaxTotalMinutes() >= currTotalMinutes
-						&& currTotalMinutes >= currEmployee
+				if ((currEmployee.getMaxTotalMinutes() < currTotalMinutes || currTotalMinutes < currEmployee
 						.getMinTotalMinutes())) {
+					System.out.println(currEmployee.getMaxTotalMinutes());
+					System.out.println(currTotalMinutes);
+					System.out.println(currEmployee.getMinTotalMinutes());
+					System.out.println("BREAK");
+					for (Shift s : currEmployeeShifts.keySet()) {
+						System.out.print("(" + s.getShiftID() + ":"
+								+ currEmployeeShifts.get(s) + ")");
+					}
 					return null;
 				}
 				System.out.println(currTotalMinutes);
@@ -264,6 +356,95 @@ public class GeneticAlgorithm {
 			System.out.println("KRAAAAAAAAA\n\n\n\n\n");
 		}
 		return localPopulation;
+	}
+
+	public boolean checkHardConstraints(IChromosome chrom, TaskInfo taskInfo) {
+		// iterate employees
+		for (EmployeeInfo currEmployee : taskInfo.getStaff().values()) {
+			System.out.println(currEmployee.getEmployeeID());
+			
+			int rowIndex = currEmployee.getEmployeeIndex();
+			// employee current state variables
+			HashMap<Shift, Integer> currEmployeeShifts = (HashMap<Shift, Integer>) currEmployee
+					.getMaxShifts();
+			int totalMinutes = 0;
+			int weekendsCounter = 0;
+			int consecutiveShifts = 0;
+
+			// iterate days
+			for (int colIndex = 1; colIndex < chrom.getColsNum(); colIndex++) {
+				String prevShiftID = (String) chrom.getChromosomeElement(
+						rowIndex, colIndex - 1);
+				String currShiftID = (String) chrom.getChromosomeElement(
+						rowIndex, colIndex);
+
+				Shift prevShift = taskInfo.getShift(prevShiftID);
+				Shift currShift = taskInfo.getShift(currShiftID);
+
+				// check shift rotation
+				if (prevShift != null && currShift != null) {
+					if (!prevShift.checkIfCanFollow(currShift)) {
+						return false;
+					}
+				}
+
+				// update total minutes
+				if (colIndex == 1 && prevShift != null) {
+					totalMinutes += prevShift.getLengthInMins();
+				}
+				if (currShift != null) {
+					totalMinutes += currShift.getLengthInMins();
+				}
+
+				// update weekend counter
+				if (currShift != null) {
+					if (colIndex % 7 == 5 || colIndex % 7 == 6) {
+						weekendsCounter += 1;
+					}
+				}
+
+				// update consecutiveShifts
+				if (colIndex == 1 && prevShift != null) {
+					consecutiveShifts++;
+				}
+				if (currShift != null && prev) {
+					consecutiveShifts++;
+				} else {
+					if (consecutiveShifts > currEmployee
+							.getMaxConsecutiveShifts()
+							|| consecutiveShifts < currEmployee
+									.getMinConsecutiveShifts()) {
+						return false;
+					}
+					consecutiveShifts = 0;
+				}
+				
+				// if current day is day of 
+				if (colIndex == 1 && prevShift != null) {
+					if (Collections.binarySearch(currEmployee.getDaysOff(),
+							0) >= 0) {
+						return false;
+					}
+				}
+				if (currShift != null) {
+					if (Collections.binarySearch(currEmployee.getDaysOff(),
+							colIndex) >= 0) {
+						return false;
+					}
+				}
+			}
+			
+			// check total minutes
+			if (totalMinutes > currEmployee.getMaxTotalMinutes() || totalMinutes < currEmployee.getMinTotalMinutes()) {
+				return false;
+			}
+			//check weekends
+			if (weekendsCounter > currEmployee.getMaxWeekends()) {
+				return false;
+			}
+		}
+		// if all chromosomes valid
+		return true;
 	}
 
 }

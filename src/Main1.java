@@ -1,4 +1,5 @@
 import hr.fer.tki.evolution_algorithm.GeneticAlgorithm;
+import hr.fer.tki.evolution_algorithm.chromosome.IChromosome;
 import hr.fer.tki.evolution_algorithm.task_info.TaskInfo;
 
 public class Main1 {
@@ -11,6 +12,7 @@ public class Main1 {
 		System.out.println(taskInfo.getNumberOfDays());
 		
 		GeneticAlgorithm GA = new GeneticAlgorithm(1, taskInfo);
+		
 	}
 
 }
