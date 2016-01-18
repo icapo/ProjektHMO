@@ -361,7 +361,6 @@ public class GeneticAlgorithm {
 	public boolean checkHardConstraints(IChromosome chrom, TaskInfo taskInfo) {
 		// iterate employees
 		for (EmployeeInfo currEmployee : taskInfo.getStaff().values()) {
-			System.out.println(currEmployee.getEmployeeID());
 			
 			int rowIndex = currEmployee.getEmployeeIndex();
 			// employee current state variables
@@ -399,7 +398,7 @@ public class GeneticAlgorithm {
 				// update weekend counter
 				if (currShift != null) {
 					if (colIndex % 7 == 5 || colIndex % 7 == 6) {
-						weekendsCounter += 1;
+						weekendsCounter++;
 					}
 				}
 
@@ -407,9 +406,9 @@ public class GeneticAlgorithm {
 				if (colIndex == 1 && prevShift != null) {
 					consecutiveShifts++;
 				}
-				if (currShift != null && prevShift != null) {
+				if (currShift != null) {
 					consecutiveShifts++;
-				} else {
+				} else if (prevShift != null) {
 					if (consecutiveShifts > currEmployee
 							.getMaxConsecutiveShifts()
 							|| consecutiveShifts < currEmployee
