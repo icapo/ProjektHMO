@@ -6,8 +6,7 @@ public class ShiftRequest implements Cloneable {
 	private String shiftID;
 	private int weight;
 	
-	public ShiftRequest(int dayIndex, String shiftID,
-			int weight) {
+	public ShiftRequest(int dayIndex, String shiftID, int weight) {
 		super();
 		this.dayIndex = dayIndex;
 		this.shiftID = shiftID;

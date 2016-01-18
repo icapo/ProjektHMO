@@ -12,12 +12,9 @@ import hr.fer.tki.evolution_algorithm.task_info.TaskInfo;
 import hr.fer.tki.functions.IFitnessFunction;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 public class GeneticAlgorithm {
 
@@ -273,7 +270,7 @@ public class GeneticAlgorithm {
 					// check max total minutes
 					int totalMinutes = currTotalMinutes;
 					for (Shift s : suggestedShifts) {
-						totalMinutes += s.getLengthInMins();
+						totalMinutes += s.getLengthInMinutes();
 					}
 
 					if (totalMinutes > currEmployee.getMaxTotalMinutes()) {
@@ -318,7 +315,12 @@ public class GeneticAlgorithm {
 								currEmployeeShifts.get(suggestedShift) - 1);
 						data[currEmployee.getEmployeeIndex()][i] = suggestedShift
 								.getShiftID();
+<<<<<<< HEAD
 						currTotalMinutes += suggestedShift.getLengthInMins();
+=======
+						currTotalMinutes += suggestedShift
+								.getLengthInMinutes();
+>>>>>>> 0007138e5c9ac62dea57aa717806b6e42906678a
 					}
 
 					currWeekends += weekends;

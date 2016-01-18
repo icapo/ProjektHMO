@@ -1,6 +1,5 @@
 package hr.fer.tki.evolution_algorithm.chromosome;
 
-import hr.fer.tki.evolution_algorithm.task_info.TaskInfo;
 
 public class TableChromosome implements IChromosome {
 	
@@ -8,8 +7,7 @@ public class TableChromosome implements IChromosome {
 	private double fitness;
 	
 	public TableChromosome(int rows, int cols) {
-		this.fitness = Double.MAX_VALUE;
-		this.data = new String[rows][cols];
+		this( new String[rows][cols]);
 	}
 	
 	public TableChromosome(String[][] data) {
