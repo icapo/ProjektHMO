@@ -79,12 +79,10 @@ public class Shift implements Cloneable{
 		if (getClass() != obj.getClass())
 			return false;
 		Shift other = (Shift) obj;
-		if (shiftID == null) {
-			if (other.shiftID != null)
-				return false;
-		} else if (!shiftID.equals(other.shiftID))
+		if (shiftID == null || other.shiftID == null) {
 			return false;
-		return true;
+		}
+		return this.shiftID.equals(other.shiftID);
 	}
 	
 	@Override
