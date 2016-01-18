@@ -1,26 +1,27 @@
 package hr.fer.tki.evolution_algorithm.task_info;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Shift implements Cloneable{
 	
 	private String shiftID;
-	private int lengthInMins;
-	private List<Shift> cannotFollow;
+	private int minutesLength;
+	private Map<String, Shift> cannotFollow;
 	
 	
-	public Shift(String shiftID, int lengthInMins) {
+	public Shift(String shiftID, int minutesLength) {
 		super();
 		this.shiftID = shiftID;
-		this.lengthInMins = lengthInMins;
-		this.cannotFollow = new ArrayList<Shift>();
+		this.minutesLength = minutesLength;
+		this.cannotFollow = new HashMap<String, Shift>();
 	}
 	
-	public Shift(String shiftID, int lengthInMins, List<Shift> cannotFollow) {
+	public Shift(String shiftID, int minutesLength, Map<String, Shift> cannotFollow) {
 		super();
 		this.shiftID = shiftID;
-		this.lengthInMins = lengthInMins;
+		this.minutesLength = minutesLength;
 		this.cannotFollow = cannotFollow;
 	}
 
@@ -30,7 +31,7 @@ public class Shift implements Cloneable{
 	}
 	
 	public boolean checkIfCanFollow(Shift shift) {
-		return !this.cannotFollow.contains(shift);
+		return !this.cannotFollow.containsKey(shift.getShiftID());
 	}
 
 
@@ -39,36 +40,33 @@ public class Shift implements Cloneable{
 	}
 
 
-	public int getLengthInMins() {
-		return lengthInMins;
+	public int getLengthInMinutes() {
+		return minutesLength;
 	}
 
 
 	public void setLengthInMins(int lengthInMins) {
-		this.lengthInMins = lengthInMins;
+		this.minutesLength = lengthInMins;
 	}
 
 
-	public List<Shift> getCannotFollow() {
-		return cannotFollow;
+	public Map<String, Shift> getCannotFollow() {
+		return this.cannotFollow;
 	}
 
 
-	public void setCannotFollow(List<Shift> cannotFollow) {
+	public void setCannotFollow(Map<String, Shift> cannotFollow) {
 		this.cannotFollow = cannotFollow;
 	}
 	
 	public void addCannotFollow(Shift shift) {
-		this.cannotFollow.add(shift);
+		this.cannotFollow.put(shift.getShiftID(),shift);
 	}
 
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((shiftID == null) ? 0 : shiftID.hashCode());
-		return result;
+		return this.shiftID.hashCode();
 	}
 
 
@@ -96,7 +94,7 @@ public class Shift implements Cloneable{
 	
 	@Override
 	public Shift clone() {
-		Shift shift = new Shift(this.shiftID, this.lengthInMins, this.cannotFollow);
+		Shift shift = new Shift(this.shiftID, this.minutesLength, this.cannotFollow);
 		return shift;
 	}
 
