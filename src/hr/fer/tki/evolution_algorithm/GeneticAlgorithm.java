@@ -12,9 +12,12 @@ import hr.fer.tki.evolution_algorithm.task_info.TaskInfo;
 import hr.fer.tki.functions.IFitnessFunction;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 public class GeneticAlgorithm {
 
@@ -200,7 +203,7 @@ public class GeneticAlgorithm {
 							.getMinConsecutiveShifts()
 							&& consecutiveShiftsNum < currEmployee
 									.getMaxConsecutiveShifts()) {
-						int allowedNum = (currEmployee.getMaxTotalMinutes() - currTotalMinutes) / (currEmployee.getMaxShifts().keySet().iterator().next().getLengthInMins());
+						int allowedNum = (currEmployee.getMaxTotalMinutes() - currTotalMinutes) / (currEmployee.getMaxShifts().keySet().iterator().next().getLengthInMinutes());
 						allowedNum -= currEmployee.getMinConsecutiveShifts();
 						if (allowedNum == 0) {
 							continue;
@@ -315,12 +318,7 @@ public class GeneticAlgorithm {
 								currEmployeeShifts.get(suggestedShift) - 1);
 						data[currEmployee.getEmployeeIndex()][i] = suggestedShift
 								.getShiftID();
-<<<<<<< HEAD
-						currTotalMinutes += suggestedShift.getLengthInMins();
-=======
-						currTotalMinutes += suggestedShift
-								.getLengthInMinutes();
->>>>>>> 0007138e5c9ac62dea57aa717806b6e42906678a
+						currTotalMinutes += suggestedShift.getLengthInMinutes();
 					}
 
 					currWeekends += weekends;
@@ -392,10 +390,10 @@ public class GeneticAlgorithm {
 
 				// update total minutes
 				if (colIndex == 1 && prevShift != null) {
-					totalMinutes += prevShift.getLengthInMins();
+					totalMinutes += prevShift.getLengthInMinutes();
 				}
 				if (currShift != null) {
-					totalMinutes += currShift.getLengthInMins();
+					totalMinutes += currShift.getLengthInMinutes();
 				}
 
 				// update weekend counter
@@ -409,7 +407,7 @@ public class GeneticAlgorithm {
 				if (colIndex == 1 && prevShift != null) {
 					consecutiveShifts++;
 				}
-				if (currShift != null && prev) {
+				if (currShift != null && prevShift != null) {
 					consecutiveShifts++;
 				} else {
 					if (consecutiveShifts > currEmployee
