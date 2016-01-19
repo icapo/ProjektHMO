@@ -1,10 +1,16 @@
 package hr.fer.tki.evolution_algorithm.task_info;
 
 import hr.fer.tki.evolution_algorithm.chromosome.IChromosome;
+import hr.fer.tki.evolution_algorithm.chromosome.TableChromosome;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class TaskInfoParser {
+	
+	private static String emptyShiftSign = " ";
 
 	public static TaskInfo parse(String filepath) {
 		// Open the file
@@ -202,14 +208,16 @@ public class TaskInfoParser {
 		PrintWriter writer;
 		try {
 			writer = new PrintWriter(filepath, "UTF-8");
-			
+
 			for (int row = 0; row < chrom.getRowsNum(); row++) {
 				for (int col = 0; col < chrom.getColsNum(); col++) {
-					String elem = (String)chrom.getChromosomeElement(row, col);
+					String elem = (String) chrom.getChromosomeElement(row, col);
 					if (elem != null) {
 						writer.print(chrom.getChromosomeElement(row, col));
+					} else {
+						writer.print(emptyShiftSign);
 					}
-					if (row != chrom.getRowsNum() - 1) {
+					if (col != chrom.getColsNum() - 1) {
 						writer.print("	");
 					}
 				}
@@ -221,6 +229,49 @@ public class TaskInfoParser {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static IChromosome parseResult(String filepath) {
+		// Open the file
+		FileInputStream fstream = null;
+		try {
+			fstream = new FileInputStream(filepath);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+
+		String line;
+
+		List<String[]> pomList = new ArrayList<String[]>();
+		
+		// Read File Line By Line
+		try {
+			while ((line = br.readLine()) != null) {
+				String[] elems = line.split("\t");
+				pomList.add(elems);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		if (pomList.size() == 0 || pomList.get(0) == null) {
+			System.out.println("File is not in valid format!");
+			System.exit(1);
+		}
+		
+		IChromosome chrom = new TableChromosome(pomList.size(), pomList.get(0).length);
+		for (int row = 0; row < pomList.size(); row++) {
+			String[] elems = pomList.get(row);
+			for (int col = 0; col < elems.length; col++) {
+				if (elems[col].equals(emptyShiftSign)) {
+					chrom.setChromosomeElement(row, col, null);
+				} else {
+					chrom.setChromosomeElement(row, col, elems[col]);
+				}
+			}
+		}
+		return chrom;
 	}
 
 }
