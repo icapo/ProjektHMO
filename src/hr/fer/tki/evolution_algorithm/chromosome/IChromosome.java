@@ -16,5 +16,8 @@ public interface IChromosome {
 	double getFitness();
 	
 	void setFitness(double value);
-	
+
+	Object getChromosomeRow(int row);
+
+	Object getChromosomeColumn(int column);
 }

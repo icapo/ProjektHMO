@@ -35,6 +35,20 @@ public class TableChromosome implements IChromosome {
 		this.fitness = value;
 	}
 
+	@Override
+	public Object getChromosomeRow(int row) {
+		return this.data[row];
+	}
+
+	@Override
+	public Object getChromosomeColumn(int column) {
+		String[] result = new String[this.data.length];
+		for(int i = 0; i < this.data.length; i++) {
+			result[i] = this.data[i][column];
+		}
+		return result;
+	}
+
 	public int getRowsNum() {
 		return this.data.length;
 	}

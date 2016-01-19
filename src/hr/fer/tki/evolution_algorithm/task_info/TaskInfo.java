@@ -3,6 +3,7 @@ package hr.fer.tki.evolution_algorithm.task_info;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TaskInfo {
     private int numberOfDays;
@@ -16,7 +17,7 @@ public class TaskInfo {
     private HashMap<String, EmployeeInfo> staff;
     private List<ShiftRequest> shiftOnRequests;
     private List<ShiftRequest> shiftOffRequest;
-    private List<Cover> cover;
+    private Map<Integer,List<Cover>> cover;
 
     public TaskInfo() {
         super();
@@ -24,7 +25,7 @@ public class TaskInfo {
         this.staff = new HashMap<String, EmployeeInfo>();
         this.shiftOnRequests = new ArrayList<ShiftRequest>();
         this.shiftOffRequest = new ArrayList<ShiftRequest>();
-        this.cover = new ArrayList<Cover>();
+        this.cover = new HashMap<Integer,List<Cover>>();
     }
 
     public int getNumberOfDays() {
@@ -75,12 +76,22 @@ public class TaskInfo {
         this.shiftOffRequest = siftOffrequest;
     }
 
-    public List<Cover> getCover() {
+    public Map<Integer, List<Cover>> getCover() {
         return cover;
     }
 
     public void setCover(List<Cover> cover) {
-        this.cover = cover;
+        this.cover.clear();
+        for (Cover cover1 : cover) {
+            List<Cover> covers = this.cover.get(cover1.getDay());
+            if (covers == null) {
+                covers = new ArrayList<>();
+                covers.add(cover1);
+                this.cover.put(cover1.getDay(), covers);
+            } else {
+                covers.add(cover1);
+            }
+        }
     }
 
 
@@ -98,6 +109,13 @@ public class TaskInfo {
     }
 
     public void addCover(Cover cover) {
-        this.cover.add(cover);
+        List<Cover> covers = this.cover.get(cover.getDay());
+        if (covers == null) {
+            covers = new ArrayList<>();
+            covers.add(cover);
+            this.cover.put(cover.getDay(), covers);
+        } else {
+            covers.add(cover);
+        }
     }
 }
