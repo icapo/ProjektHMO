@@ -424,6 +424,7 @@ public class GeneticAlgorithm {
 			int totalMinutes = 0;
 			int weekendsCounter = 0;
 			int consecutiveShifts = 0;
+			int consecutiveDaysOff = 0;
 
 			// iterate days
 			for (int colIndex = 1; colIndex < chrom.getColsNum(); colIndex++) {
@@ -467,6 +468,19 @@ public class GeneticAlgorithm {
 						weekendsCounter++;
 					}
 				}
+				
+				// update consecutiveDaysOff
+				if (colIndex == 1 && prevShift == null) {
+					consecutiveDaysOff += currEmployee.getMinConsecutiveDaysOff();
+				}
+				if (currShift == null) {
+					consecutiveDaysOff++;
+				} else if (prevShift == null) {
+					if (consecutiveDaysOff < currEmployee.getMinConsecutiveDaysOff()) {
+						return false;
+					}
+					consecutiveDaysOff = 0;
+				}
 
 				// update consecutiveShifts
 				if (colIndex == 1 && prevShift != null) {
@@ -503,6 +517,7 @@ public class GeneticAlgorithm {
 					|| totalMinutes < currEmployee.getMinTotalMinutes()) {
 				return false;
 			}
+
 			// check weekends
 			if (weekendsCounter > currEmployee.getMaxWeekends()) {
 				return false;
