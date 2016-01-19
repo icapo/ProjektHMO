@@ -8,7 +8,9 @@ public class Main1 {
 	public static void main(String[] args) {
 		TaskInfo taskInfo = TaskInfoParser.parse("sample.txt");
 		
-		GeneticAlgorithm GA = new GeneticAlgorithm(null, null, null, 0, 0, 30, taskInfo);	
+		GeneticAlgorithm GA = new GeneticAlgorithm(null, null, null, 0, 0, 30, taskInfo);
+		System.out.println("Population generated");
+		GeneticAlgorithm GA = new GeneticAlgorithm(null, null, null, 0, 0, 30, taskInfo);
 		System.out.println("Population generated");
 	}
 }
