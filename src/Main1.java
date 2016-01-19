@@ -11,9 +11,9 @@ import hr.fer.tki.functions.FitnessFunction;
 public class Main1 {
 
 	public static void main(String[] args) {
-		int populationSize = 30;
+		int populationSize = 90;
 		int bestSolutionsNum = 10;
-        int epochSize = 1;
+        int epochSize = 10;
 
 		TaskInfo taskInfo = TaskInfoParser.parse("sample.txt");
 		

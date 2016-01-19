@@ -29,14 +29,14 @@ public class TournamentSelection implements  ISelection{
 
         Random r = new Random();
         int i = 1;
-        for (; i < this.numberOfResults || i < chromosomes.size(); i++) {
+        for (; i < this.numberOfResults && i < chromosomes.size(); i++) {
             if (r.nextFloat() < 0.05) {
                 continue;
             }
             solutions.add(chromosomes.get(i));
         }
 
-        for (int j = i; j < chromosomes.size() || j < this.numberOfResults; j++) {
+        for (int j = i; j < chromosomes.size() && j < this.numberOfResults; j++) {
             solutions.add(chromosomes.get(j));
         }
 

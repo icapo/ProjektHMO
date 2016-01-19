@@ -50,10 +50,6 @@ public class GeneticAlgorithm {
     public List<IChromosome> getBestSolutions(int num) {
         List<IChromosome> solutions = new ArrayList<>();
 
-        this.evaluatePopulation(this.population);
-
-        this.sortPopulation();
-
         for (int i = 0; i < num; i++) {
             solutions.add(this.population.get(i));
         }
@@ -109,18 +105,22 @@ public class GeneticAlgorithm {
 
                 IChromosome mutated = this.mutation.copyMutate(chromosome);
                 this.evaluateChromosome(mutated);
+                if(mutated.getFitness() > 500000) {
+                }else {
+                    System.out.println("AaAaaaaaaaaadsfaadsfdasfdfdsdfasdfsdfsadfsa mutation");
+                }
                 nextPopulation.add(mutated);
             }
             for (IChromosome c : nextPopulation) {
                 currentPopulation.add(c);
             }
-            currentPopulation = this.selection.doSelection(this.population);
+            currentPopulation = this.selection.doSelection(currentPopulation);
 
         }
-
+        this.population = currentPopulation;
         System.out.println("ENDING population ---- ");
-        for (int i = 0; i < currentPopulation.size(); i++) {
-            System.out.println(currentPopulation.get(i).getFitness());
+        for (int i = 0; i < this.population.size(); i++) {
+            System.out.println(this.population.get(i).getFitness());
         }
     }
 }
