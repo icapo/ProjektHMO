@@ -12,10 +12,10 @@ import java.util.HashMap;
 public class ConstraintChecker {
 
     /**
-     * Check hard constraints
+     * Check hard constraints fast, returning immediately when hard constraints are not satisfied
      *
-     * @param chromosome    chromosome
-     * @param taskInfo task informations
+     * @param chromosome chromosome
+     * @param taskInfo   task informations
      * @return <code>true</code> if all constraints are satisfied,
      * <code>false</code> if not
      */
@@ -34,29 +34,23 @@ public class ConstraintChecker {
             // iterate days
             for (int colIndex = 1; colIndex < chromosome.getColsNum(); colIndex++) {
 
-                String prevShiftID = (String) chromosome.getChromosomeElement(
-                        rowIndex, colIndex - 1);
-                String currShiftID = (String) chromosome.getChromosomeElement(
-                        rowIndex, colIndex);
+                String prevShiftID = (String) chromosome.getChromosomeElement(rowIndex, colIndex - 1);
+                String currShiftID = (String) chromosome.getChromosomeElement(rowIndex, colIndex);
 
                 Shift prevShift = taskInfo.getShift(prevShiftID);
                 Shift currShift = taskInfo.getShift(currShiftID);
 
                 // update number of occurrences of specific shift
                 if (colIndex == 1 && prevShift != null) {
-                    currMaxShiftsState.put(prevShift,
-                            currMaxShiftsState.get(prevShift) - 1);
+                    currMaxShiftsState.put(prevShift, currMaxShiftsState.get(prevShift) - 1);
                 }
                 if (currShift != null) {
-                    currMaxShiftsState.put(currShift,
-                            currMaxShiftsState.get(currShift) - 1);
+                    currMaxShiftsState.put(currShift, currMaxShiftsState.get(currShift) - 1);
                 }
 
                 // check shift rotation
-                if (prevShift != null && currShift != null) {
-                    if (!prevShift.checkIfCanFollow(currShift)) {
-                        return false;
-                    }
+                if (!checkShiftRotation(currShift, prevShift)) {
+                    return false;
                 }
 
                 // update total minutes
@@ -81,7 +75,7 @@ public class ConstraintChecker {
                 if (currShift == null) {
                     consecutiveDaysOff++;
                 } else if (prevShift == null) {
-                    if (consecutiveDaysOff < currEmployee.getMinConsecutiveDaysOff()) {
+                    if (!checkConsecutiveDaysOff(consecutiveDaysOff, currEmployee)) {
                         return false;
                     }
                     consecutiveDaysOff = 0;
@@ -94,48 +88,104 @@ public class ConstraintChecker {
                 if (currShift != null) {
                     consecutiveShifts++;
                 } else if (prevShift != null) {
-                    if (consecutiveShifts > currEmployee
-                            .getMaxConsecutiveShifts()
-                            || consecutiveShifts < currEmployee
-                            .getMinConsecutiveShifts()) {
+                    if (!checkShiftsInterval(consecutiveShifts, currEmployee)) {
                         return false;
                     }
                     consecutiveShifts = 0;
                 }
 
                 // if current day is day of
-                if (colIndex == 1 && prevShift != null) {
-                    if (Collections.binarySearch(currEmployee.getDaysOff(), 0) >= 0) {
-                        return false;
-                    }
-                }
-                if (currShift != null) {
-                    if (Collections.binarySearch(currEmployee.getDaysOff(),
-                            colIndex) >= 0) {
-                        return false;
-                    }
+                if (!checkDayOffConstraint(colIndex, prevShift, currShift, currEmployee)) {
+                    return false;
                 }
             }
 
             // check total minutes
-            if (totalMinutes > currEmployee.getMaxTotalMinutes()
-                    || totalMinutes < currEmployee.getMinTotalMinutes()) {
+            if (!checkTotalMinutes(totalMinutes, currEmployee)) {
                 return false;
             }
 
             // check weekends
-            if (weekendsCounter > currEmployee.getMaxWeekends()) {
+            if (!checkWeekends(weekendsCounter, currEmployee)) {
                 return false;
             }
+
             // check number of occurrences of specific shift
-            for (Integer num : currMaxShiftsState.values()) {
-                if (num < 0) {
-                    return false;
-                }
+            if (!checkSpecificShifts(currMaxShiftsState)) {
+                return false;
             }
         }
         // if all chromosomes valid
         return true;
     }
+
+
+    /**
+     * METHODS FOR CHECKING HARD CONSTRAINTS
+     */
+
+    private static boolean checkSpecificShifts(HashMap<Shift, Integer> currMaxShiftsState) {
+        for (Integer num : currMaxShiftsState.values()) {
+            if (num < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean checkWeekends(int weekendsCounter, EmployeeInfo currEmployee) {
+        return weekendsCounter <= currEmployee.getMaxWeekends();
+    }
+
+    private static boolean checkTotalMinutes(int totalMinutes, EmployeeInfo currEmployee) {
+        if (totalMinutes > currEmployee.getMaxTotalMinutes() || totalMinutes < currEmployee.getMinTotalMinutes()) {
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean checkShiftsInterval(int consecutiveShifts, EmployeeInfo currEmployee) {
+        if (consecutiveShifts > currEmployee.getMaxConsecutiveShifts() || consecutiveShifts < currEmployee.getMinConsecutiveShifts()) {
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean checkConsecutiveDaysOff(int consecutiveDaysOff, EmployeeInfo currEmployee) {
+        return consecutiveDaysOff >= currEmployee.getMinConsecutiveDaysOff();
+    }
+
+    private static boolean checkShiftRotation(Shift currShift, Shift prevShift) {
+        if (prevShift != null && currShift != null) {
+            if (!prevShift.checkIfCanFollow(currShift)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean checkDayOffConstraint(int colIndex, Shift prevShift, Shift currShift, EmployeeInfo currEmployee) {
+
+        if (colIndex == 1 && prevShift != null) {
+            if (Collections.binarySearch(currEmployee.getDaysOff(), 0) >= 0) {
+                return false;
+            }
+        }
+        if (currShift != null) {
+            if (Collections.binarySearch(currEmployee.getDaysOff(), colIndex) >= 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /***
+     *METHODS FOR CHECKING WEAK CONSTRAINTS
+     */
+
+
+    /**
+     * METHOD FOR CHECKING CUMMULATIVE ERRORS
+     */
 
 }
