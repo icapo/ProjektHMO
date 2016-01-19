@@ -422,7 +422,7 @@ public class GeneticAlgorithm {
 			HashMap<Shift, Integer> currMaxShiftsState = (HashMap<Shift, Integer>) currEmployee
 					.getMaxShifts().clone();
 			int totalMinutes = 0;
-			int weekendsCounter = 0;
+			int workingWeekends = 0;
 			int consecutiveShifts = 0;
 			int consecutiveDaysOff = 0;
 
@@ -465,7 +465,7 @@ public class GeneticAlgorithm {
 				// update weekend counter
 				if (currShift != null) {
 					if (colIndex % 7 == 5 || colIndex % 7 == 6) {
-						weekendsCounter++;
+						workingWeekends++;
 					}
 				}
 				
@@ -519,7 +519,7 @@ public class GeneticAlgorithm {
 			}
 
 			// check weekends
-			if (weekendsCounter > currEmployee.getMaxWeekends()) {
+			if (workingWeekends > currEmployee.getMaxWeekends()) {
 				return false;
 			}
 			// check number of occurrences of specific shift
