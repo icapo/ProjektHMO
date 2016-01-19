@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class ConstraintChecker {
 
     /**
-     * Check hard constraints
+     * Check hard constraints fast, returning immediately when hard constraints are not satisfied
      *
      * @param chromosome chromosome
      * @param taskInfo   task informations
@@ -49,7 +49,7 @@ public class ConstraintChecker {
                 }
 
                 // check shift rotation
-                if(!checkShiftRotation(currShift, prevShift)) {
+                if (!checkShiftRotation(currShift, prevShift)) {
                     return false;
                 }
 
@@ -75,7 +75,7 @@ public class ConstraintChecker {
                 if (currShift == null) {
                     consecutiveDaysOff++;
                 } else if (prevShift == null) {
-                    if(!checkConsecutiveDaysOff(consecutiveDaysOff, currEmployee)) {
+                    if (!checkConsecutiveDaysOff(consecutiveDaysOff, currEmployee)) {
                         return false;
                     }
                     consecutiveDaysOff = 0;
@@ -88,43 +88,41 @@ public class ConstraintChecker {
                 if (currShift != null) {
                     consecutiveShifts++;
                 } else if (prevShift != null) {
-                    if(!checkShiftsInterval(consecutiveShifts, currEmployee)) {
+                    if (!checkShiftsInterval(consecutiveShifts, currEmployee)) {
                         return false;
                     }
                     consecutiveShifts = 0;
                 }
 
                 // if current day is day of
-                if (colIndex == 1 && prevShift != null) {
-                    if (Collections.binarySearch(currEmployee.getDaysOff(), 0) >= 0) {
-                        return false;
-                    }
-                }
-                if (currShift != null) {
-                    if (Collections.binarySearch(currEmployee.getDaysOff(), colIndex) >= 0) {
-                        return false;
-                    }
+                if (!checkDayOffConstraint(colIndex, prevShift, currShift, currEmployee)) {
+                    return false;
                 }
             }
 
             // check total minutes
-            if(!checkTotalMinutes(totalMinutes, currEmployee) ){
+            if (!checkTotalMinutes(totalMinutes, currEmployee)) {
                 return false;
             }
 
             // check weekends
-            if(!checkWeekends(weekendsCounter, currEmployee)) {
+            if (!checkWeekends(weekendsCounter, currEmployee)) {
                 return false;
             }
 
             // check number of occurrences of specific shift
-            if(!checkSpecificShifts(currMaxShiftsState)) {
+            if (!checkSpecificShifts(currMaxShiftsState)) {
                 return false;
             }
         }
         // if all chromosomes valid
         return true;
     }
+
+
+    /**
+     * METHODS FOR CHECKING HARD CONSTRAINTS
+     */
 
     private static boolean checkSpecificShifts(HashMap<Shift, Integer> currMaxShiftsState) {
         for (Integer num : currMaxShiftsState.values()) {
@@ -165,5 +163,29 @@ public class ConstraintChecker {
         }
         return true;
     }
+
+    private static boolean checkDayOffConstraint(int colIndex, Shift prevShift, Shift currShift, EmployeeInfo currEmployee) {
+
+        if (colIndex == 1 && prevShift != null) {
+            if (Collections.binarySearch(currEmployee.getDaysOff(), 0) >= 0) {
+                return false;
+            }
+        }
+        if (currShift != null) {
+            if (Collections.binarySearch(currEmployee.getDaysOff(), colIndex) >= 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /***
+     *METHODS FOR CHECKING WEAK CONSTRAINTS
+     */
+
+
+    /**
+     * METHOD FOR CHECKING CUMMULATIVE ERRORS
+     */
 
 }
