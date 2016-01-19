@@ -3,18 +3,17 @@ package hr.fer.tki.evolution_algorithm.genetic;
 import hr.fer.tki.evolution_algorithm.chromosome.IChromosome;
 import hr.fer.tki.evolution_algorithm.crossover.ICrossover;
 import hr.fer.tki.evolution_algorithm.mutation.IMutation;
+import hr.fer.tki.evolution_algorithm.selection.ISelection;
 import hr.fer.tki.evolution_algorithm.task_info.TaskInfo;
 import hr.fer.tki.functions.ConstraintChecker;
 import hr.fer.tki.functions.IFitnessFunction;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class GeneticAlgorithm {
 
     private IMutation mutation;
+    private ISelection selection;
     private ICrossover crossover;
     private int epochNum;
     private int populationSize;
@@ -27,11 +26,12 @@ public class GeneticAlgorithm {
 
 
     public GeneticAlgorithm(IFitnessFunction fitnessFunction,
-                            IMutation mutation, ICrossover crossover, int epochNum,
+                            IMutation mutation, ICrossover crossover, ISelection selection, int epochNum,
                             double precision, int populationSize, TaskInfo taskInfo) {
         super();
         this.mutation = mutation;
         this.crossover = crossover;
+        this.selection = selection;
         this.epochNum = epochNum;
         this.fitnessFunction = fitnessFunction;
         this.binaryType = binaryType;
@@ -72,6 +72,10 @@ public class GeneticAlgorithm {
         }
     }
 
+    public void evaluateChromosome(IChromosome chromosome) {
+        double fitness = this.fitnessFunction.calculate(chromosome, this.taskInfo);
+        chromosome.setFitness(fitness);
+    }
 
     private void sortPopulation() {
         Collections.sort(this.population, new Comparator<IChromosome>() {
@@ -82,11 +86,41 @@ public class GeneticAlgorithm {
         });
     }
 
-
     /**
      * Method starts training genetic algorithm
      */
     public void startTraining() {
         this.population = PopulationGenerator.generateStartingPopulation(populationSize, taskInfo);
+        this.evaluatePopulation(this.population);
+
+        List<IChromosome> currentPopulation = this.selection.doSelection(this.population);
+
+
+        System.out.println("First population ---- ");
+        for (int i = 0; i < currentPopulation.size(); i++) {
+            System.out.println(currentPopulation.get(i).getFitness());
+        }
+
+        for (int i = 0; i < this.epochNum; i++) {
+            List<IChromosome> nextPopulation = new LinkedList<>();
+            for (int j = 0; j < currentPopulation.size(); j++) {
+                IChromosome chromosome = currentPopulation.get(j);
+                //TODO: do crossover
+
+                IChromosome mutated = this.mutation.copyMutate(chromosome);
+                this.evaluateChromosome(mutated);
+                nextPopulation.add(mutated);
+            }
+            for (IChromosome c : nextPopulation) {
+                currentPopulation.add(c);
+            }
+            currentPopulation = this.selection.doSelection(this.population);
+
+        }
+
+        System.out.println("ENDING population ---- ");
+        for (int i = 0; i < currentPopulation.size(); i++) {
+            System.out.println(currentPopulation.get(i).getFitness());
+        }
     }
 }
