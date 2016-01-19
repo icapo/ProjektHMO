@@ -51,6 +51,19 @@ public class GeneticAlgorithm {
 			}
 		}
 	}
+	
+	/**
+	 * Get best solutions.
+	 * @param num
+	 * @return
+	 */
+	public List<IChromosome> getBestSolutions(int num) {
+		List<IChromosome> solutions = new ArrayList<IChromosome>();
+		for (int i = 0; i < num; i++) {
+			solutions.add(population.get(i));
+		}
+		return solutions;
+	}
 
 	/**
 	 * Generate list of valid consecutive shifts.
