@@ -6,7 +6,6 @@ import hr.fer.tki.evolution_algorithm.task_info.EmployeeInfo;
 import hr.fer.tki.evolution_algorithm.task_info.ShiftRequest;
 import hr.fer.tki.evolution_algorithm.task_info.TaskInfo;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

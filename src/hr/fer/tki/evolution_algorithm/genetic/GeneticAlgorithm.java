@@ -8,6 +8,8 @@ import hr.fer.tki.functions.ConstraintChecker;
 import hr.fer.tki.functions.IFitnessFunction;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class GeneticAlgorithm {
@@ -36,7 +38,7 @@ public class GeneticAlgorithm {
         this.precision = precision;
         this.taskInfo = taskInfo;
         this.populationSize = populationSize;
-        this.population = PopulationGenerator.generatePopulation(populationSize, taskInfo);
+        this.population = PopulationGenerator.generateStartingPopulation(populationSize, taskInfo);
 
         // check if hard constraints are satisfied
         for (IChromosome chrom : population) {
@@ -58,15 +60,25 @@ public class GeneticAlgorithm {
         double[] fitnesses = new double[population.size()];
 
         for (int i = 0; i < this.population.size(); i++) {
-            fitnesses[i] = this.fitnessFunction.calculate(population.get(i), this.taskInfo);
+            IChromosome chromosome = population.get(i);
+            fitnesses[i] = this.fitnessFunction.calculate(chromosome, this.taskInfo);
+            chromosome.setFitness(fitnesses[i]);
         }
         for(int i = 0; i < this.population.size(); i++) {
             System.out.println("Fitness: " + fitnesses[i]);
         }
 
+        Collections.sort(this.population, new Comparator<IChromosome>() {
+            @Override
+            public int compare(IChromosome o1, IChromosome o2) {
+                return (int) (o1.getFitness() - o2.getFitness());
+            }
+        });
+
         for(int i = 0; i < num; i++) {
             solutions.add(this.population.get(i));
         }
+
         return solutions;
     }
 

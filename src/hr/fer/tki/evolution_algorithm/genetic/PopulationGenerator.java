@@ -18,7 +18,7 @@ public class PopulationGenerator {
      * @param populationSize
      * @return
      */
-    public static List<IChromosome>  generatePopulation(int populationSize, TaskInfo taskInfo) {
+    public static List<IChromosome> generateStartingPopulation(int populationSize, TaskInfo taskInfo) {
         List<IChromosome> localPopulation = new ArrayList<IChromosome>();
 
         // iterate chromosomes
