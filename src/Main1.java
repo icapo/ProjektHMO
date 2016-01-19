@@ -1,6 +1,6 @@
 import java.util.List;
 
-import hr.fer.tki.evolution_algorithm.GeneticAlgorithm;
+import hr.fer.tki.evolution_algorithm.genetic.GeneticAlgorithm;
 import hr.fer.tki.evolution_algorithm.chromosome.IChromosome;
 import hr.fer.tki.evolution_algorithm.task_info.TaskInfo;
 import hr.fer.tki.evolution_algorithm.task_info.TaskInfoParser;
