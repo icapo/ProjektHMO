@@ -12,11 +12,7 @@ public class Main1 {
 		int bestSolutionsNum = 10;
 		TaskInfo taskInfo = TaskInfoParser.parse("sample.txt");
 		
-<<<<<<< HEAD
 		GeneticAlgorithm GA = new GeneticAlgorithm(null, null, null, 0, 0, populationSize, taskInfo);
-=======
-		GeneticAlgorithm GA = new GeneticAlgorithm(null, null, null, 0, 0, 30, taskInfo);
->>>>>>> branch 'master' of https://github.com/icapo/ProjektHMO.git
 		System.out.println("Population generated");
 		List<IChromosome> bestSolutions = GA.getBestSolutions(bestSolutionsNum);
 		for (int i = 0; i < bestSolutionsNum; i++) {
