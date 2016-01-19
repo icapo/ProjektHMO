@@ -10,7 +10,5 @@ public class Main1 {
 		
 		GeneticAlgorithm GA = new GeneticAlgorithm(null, null, null, 0, 0, 30, taskInfo);
 		System.out.println("Population generated");
-		GeneticAlgorithm GA = new GeneticAlgorithm(null, null, null, 0, 0, 30, taskInfo);
-		System.out.println("Population generated");
 	}
 }
