@@ -167,11 +167,9 @@ public class TaskInfoParser {
 						String shiftID = elems[2];
 						int weight = Integer.parseInt(elems[3]);
 
-						ShiftRequest shiftReq = new ShiftRequest(dayIndex,
-								shiftID, weight);
+						ShiftRequest shiftReq = new ShiftRequest(dayIndex,shiftID, weight);
 
-						taskInfo.getStaff(employeeID).addShiftOffRequest(
-								shiftReq);
+						taskInfo.getStaff(employeeID).addShiftOffRequest(shiftReq);
 					}
 				}
 

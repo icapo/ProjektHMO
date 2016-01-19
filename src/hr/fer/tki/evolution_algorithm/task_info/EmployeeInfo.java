@@ -1,8 +1,6 @@
 package hr.fer.tki.evolution_algorithm.task_info;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -33,10 +31,10 @@ public class EmployeeInfo implements Cloneable {
 		this.minConsecutiveShifts = minConsecutiveShifts;
 		this.minConsecutiveDaysOff = minConsecutiveDaysOff;
 		this.maxWeekends = maxWeekends;
-		this.maxShifts = new HashMap<Shift, Integer>();
-		this.daysOff = new ArrayList<Integer>();
-		this.shiftOffRequests = new ArrayList<ShiftRequest>();
-		this.shiftOnRequests = new ArrayList<ShiftRequest>();
+		this.maxShifts = new HashMap<>();
+		this.daysOff = new ArrayList<>();
+		this.shiftOffRequests = new ArrayList<>();
+		this.shiftOnRequests = new ArrayList<>();
 	}
 	
 	public int getEmployeeIndex() {
@@ -145,6 +143,22 @@ public class EmployeeInfo implements Cloneable {
 
 	public void setMaxWeekends(int maxWeekends) {
 		this.maxWeekends = maxWeekends;
+	}
+
+	public List<ShiftRequest> getShiftOnRequests() {
+		return shiftOnRequests;
+	}
+
+	public void setShiftOnRequests(List<ShiftRequest> shiftOnRequests) {
+		this.shiftOnRequests = shiftOnRequests;
+	}
+
+	public List<ShiftRequest> getShiftOffRequests() {
+		return shiftOffRequests;
+	}
+
+	public void setShiftOffRequests(List<ShiftRequest> shiftOffRequests) {
+		this.shiftOffRequests = shiftOffRequests;
 	}
 
 	@Override

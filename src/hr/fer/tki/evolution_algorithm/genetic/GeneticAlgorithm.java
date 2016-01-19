@@ -1,20 +1,13 @@
 package hr.fer.tki.evolution_algorithm.genetic;
 
-import java.util.Random;
-
 import hr.fer.tki.evolution_algorithm.chromosome.IChromosome;
-import hr.fer.tki.evolution_algorithm.chromosome.TableChromosome;
 import hr.fer.tki.evolution_algorithm.crossover.ICrossover;
 import hr.fer.tki.evolution_algorithm.mutation.IMutation;
-import hr.fer.tki.evolution_algorithm.task_info.EmployeeInfo;
-import hr.fer.tki.evolution_algorithm.task_info.Shift;
 import hr.fer.tki.evolution_algorithm.task_info.TaskInfo;
 import hr.fer.tki.functions.ConstraintChecker;
 import hr.fer.tki.functions.IFitnessFunction;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 public class GeneticAlgorithm {
@@ -23,7 +16,7 @@ public class GeneticAlgorithm {
     private ICrossover crossover;
     private int epochNum;
     private int populationSize;
-    private IFitnessFunction func;
+    private IFitnessFunction fitnessFunction;
     private IChromosome startChromosome;
     private boolean binaryType;
     private List<IChromosome> population;
@@ -31,17 +24,18 @@ public class GeneticAlgorithm {
     private TaskInfo taskInfo;
 
 
-    public GeneticAlgorithm(IFitnessFunction func,
+    public GeneticAlgorithm(IFitnessFunction fitnessFunction,
                             IMutation mutation, ICrossover crossover, int epochNum,
                             double precision, int populationSize, TaskInfo taskInfo) {
         super();
         this.mutation = mutation;
         this.crossover = crossover;
         this.epochNum = epochNum;
-        this.func = func;
+        this.fitnessFunction = fitnessFunction;
         this.binaryType = binaryType;
         this.precision = precision;
         this.taskInfo = taskInfo;
+        this.populationSize = populationSize;
         this.population = PopulationGenerator.generatePopulation(populationSize, taskInfo);
 
         // check if hard constraints are satisfied
@@ -61,8 +55,17 @@ public class GeneticAlgorithm {
      */
     public List<IChromosome> getBestSolutions(int num) {
         List<IChromosome> solutions = new ArrayList<>();
-        for (int i = 0; i < num; i++) {
-            solutions.add(population.get(i));
+        double[] fitnesses = new double[population.size()];
+
+        for (int i = 0; i < this.population.size(); i++) {
+            fitnesses[i] = this.fitnessFunction.calculate(population.get(i), this.taskInfo);
+        }
+        for(int i = 0; i < this.population.size(); i++) {
+            System.out.println("Fitness: " + fitnesses[i]);
+        }
+
+        for(int i = 0; i < num; i++) {
+            solutions.add(this.population.get(i));
         }
         return solutions;
     }
