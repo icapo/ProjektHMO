@@ -38,15 +38,7 @@ public class GeneticAlgorithm {
         this.precision = precision;
         this.taskInfo = taskInfo;
         this.populationSize = populationSize;
-        this.population = PopulationGenerator.generateStartingPopulation(populationSize, taskInfo);
 
-        // check if hard constraints are satisfied
-        for (IChromosome chrom : population) {
-            if (!ConstraintChecker.checkHardConstraints(chrom, taskInfo)) {
-                System.out.println("Hard constraints are not satisfied.");
-                System.exit(1);
-            }
-        }
     }
 
     /**
@@ -57,30 +49,44 @@ public class GeneticAlgorithm {
      */
     public List<IChromosome> getBestSolutions(int num) {
         List<IChromosome> solutions = new ArrayList<>();
-        double[] fitnesses = new double[population.size()];
 
-        for (int i = 0; i < this.population.size(); i++) {
+        this.evaluatePopulation(this.population);
+
+        this.sortPopulation();
+
+        for (int i = 0; i < num; i++) {
+            solutions.add(this.population.get(i));
+        }
+
+        for (IChromosome chromosome : solutions) {
+            System.out.println(chromosome.getFitness());
+        }
+        return solutions;
+    }
+
+    public void evaluatePopulation(List<IChromosome> population) {
+        for (int i = 0; i < population.size(); i++) {
             IChromosome chromosome = population.get(i);
-            fitnesses[i] = this.fitnessFunction.calculate(chromosome, this.taskInfo);
-            chromosome.setFitness(fitnesses[i]);
+            double fitness = this.fitnessFunction.calculate(chromosome, this.taskInfo);
+            chromosome.setFitness(fitness);
         }
-        for(int i = 0; i < this.population.size(); i++) {
-            System.out.println("Fitness: " + fitnesses[i]);
-        }
+    }
 
+
+    private void sortPopulation() {
         Collections.sort(this.population, new Comparator<IChromosome>() {
             @Override
             public int compare(IChromosome o1, IChromosome o2) {
                 return (int) (o1.getFitness() - o2.getFitness());
             }
         });
-
-        for(int i = 0; i < num; i++) {
-            solutions.add(this.population.get(i));
-        }
-
-        return solutions;
     }
 
 
+    /**
+     * Method starts training genetic algorithm
+     */
+    public void startTraining() {
+        this.population = PopulationGenerator.generateStartingPopulation(populationSize, taskInfo);
+    }
 }

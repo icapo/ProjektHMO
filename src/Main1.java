@@ -14,10 +14,11 @@ public class Main1 {
 		TaskInfo taskInfo = TaskInfoParser.parse("sample.txt");
 		
 		GeneticAlgorithm GA = new GeneticAlgorithm(new FitnessFunction(), null, null, 0, 0, populationSize, taskInfo);
+        GA.startTraining();
 		System.out.println("Population generated");
 		List<IChromosome> bestSolutions = GA.getBestSolutions(bestSolutionsNum);
 		for (int i = 0; i < bestSolutionsNum; i++) {
-			TaskInfoParser.write(bestSolutions.get(i), "res-" + (i + 1) + "-capalija.txt");
+			TaskInfoParser.write(bestSolutions.get(i), "res-" + (i + 1) + "-capalija-gobin.txt");
 		}
 	}
 }

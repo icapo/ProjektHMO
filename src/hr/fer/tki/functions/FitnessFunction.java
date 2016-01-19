@@ -12,6 +12,11 @@ import java.util.Map;
 public class FitnessFunction implements IFitnessFunction {
 
     public double calculate(IChromosome chromosome, TaskInfo taskInfo) {
+
+        if(!ConstraintChecker.checkHardConstraints(chromosome, taskInfo)) {
+            return Double.MAX_VALUE;
+        }
+
         double shiftsOnRequests = 0;
         double shiftsOffRequets = 0;
         double shiftCoverage = 0;
