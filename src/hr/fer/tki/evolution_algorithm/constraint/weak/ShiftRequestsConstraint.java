@@ -1,7 +1,7 @@
 package hr.fer.tki.evolution_algorithm.constraint.weak;
 
 
-public class ShiftRequests {
+public class ShiftRequestsConstraint {
     private int counter =0 ;
 
     public int getCounter() {
