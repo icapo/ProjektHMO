@@ -18,10 +18,11 @@ public class Crossover implements  ICrossover{
     @Override
     public List<IChromosome> crossover(IChromosome chromosome1, IChromosome chromosome2) {
         //do day switch
-
+        this.coeff = 1;
         Random random = new Random();
         int chromosome1ColsNum = chromosome1.getColsNum();
         int chromosome2ColsNum = chromosome2.getColsNum();
+        List<IChromosome> list = new LinkedList<>();
 
         if(random.nextFloat() < this.coeff) {
             int col1Index = random.nextInt(chromosome1ColsNum);
@@ -32,10 +33,12 @@ public class Crossover implements  ICrossover{
 
             chromosome1.setChromosomeColumn(col2Index, col2);
             chromosome2.setChromosomeColumn(col1Index, col1);
+            list.add(chromosome1);
+            list.add(chromosome2);
+        }else {
+            list.add(null);
+            list.add(null);
         }
-        List<IChromosome> list = new LinkedList<>();
-        list.add(chromosome1);
-        list.add(chromosome2);
 
         //do repair if failed
         return list;

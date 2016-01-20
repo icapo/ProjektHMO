@@ -73,14 +73,6 @@ public class GeneticAlgorithm {
         chromosome.setFitness(fitness);
     }
 
-    private void sortPopulation() {
-        Collections.sort(this.population, new Comparator<IChromosome>() {
-            @Override
-            public int compare(IChromosome o1, IChromosome o2) {
-                return (int) (o1.getFitness() - o2.getFitness());
-            }
-        });
-    }
 
     /**
      * Method starts training genetic algorithm
@@ -88,15 +80,13 @@ public class GeneticAlgorithm {
     public void startTraining() {
         this.population = PopulationGenerator.generateStartingPopulation(populationSize, taskInfo);
         this.evaluatePopulation(this.population);
+        sortByFitness(this.population);
 
         List<IChromosome> currentPopulation = this.population;
 
-        System.out.println("First population ---- ");
-        for (int i = 0; i < currentPopulation.size(); i++) {
-            System.out.println(currentPopulation.get(i).getFitness());
-        }
-
-        Random r = new Random();
+        System.out.println("Starting population BEST:---- ");
+        System.out.println(currentPopulation.get(0).getFitness()+","+currentPopulation.get(1).getFitness()+","+currentPopulation.get(2).getFitness());
+        System.out.println();
 
         for (int i = 0; i < this.epochNum; i++) {
 
@@ -104,20 +94,30 @@ public class GeneticAlgorithm {
 
             List<IChromosome> newPopulation = new LinkedList<>();
 
-            for (int j = 1; j <= 0.1 * populationSize; j++) {
-                IChromosome chromosome1 = currentPopulation.get(r.nextInt(populationSize));
-                IChromosome chromosome2 = currentPopulation.get(r.nextInt(populationSize));
-                List<IChromosome>  result = this.crossover.crossover(chromosome1, chromosome2);
+            double minFitness = 89999999;
+            for (int j = 0; j < populationSize - 1; j++) {
+                for (int k = j+1; k < populationSize; k++) {
 
-                for (IChromosome c : result) {
-                    double fitness = this.fitnessFunction.calculate(c, this.taskInfo);
-                    if(fitness > 500000){
-                        continue;
-                    }else {
+                    IChromosome chromosome1 = currentPopulation.get(j);
+                    IChromosome chromosome2 = currentPopulation.get(k);
+                    List<IChromosome>  result = this.crossover.crossover(chromosome1, chromosome2);
+
+                    for (IChromosome c : result) {
+                        if(c == null) {
+                            continue;
+                        }
+                        if(!ConstraintChecker.checkHardConstraints(c, this.taskInfo)) {
+                            continue;
+                        }
+                        double fitness = this.fitnessFunction.calculate(c, this.taskInfo);
+                        if(fitness < minFitness) {
+                            minFitness = fitness;
+                        }
                         System.out.println("dfasafdsfdasfdasfadsdfadsfjdhsfkjadshfkjds: " + fitness);
+
+                        c.setFitness(fitness);
+                        newPopulation.add(c);
                     }
-                    c.setFitness(fitness);
-                    newPopulation.add(c);
                 }
             }
 
@@ -128,7 +128,9 @@ public class GeneticAlgorithm {
 
             //try mutating some of the population - like 3% of population
 
-            currentPopulation = this.selection.doSelection(currentPopulation);
+            currentPopulation = this.selection.doSelection(currentPopulation, this.populationSize);
+            System.out.println("Number: "+ i +" population BEST GENERATED:---- " + minFitness);
+            System.out.println(currentPopulation.get(0).getFitness()+","+currentPopulation.get(1).getFitness()+","+currentPopulation.get(2).getFitness());
 
         }
 
@@ -137,5 +139,10 @@ public class GeneticAlgorithm {
         for (int i = 0; i < this.population.size(); i++) {
             System.out.println(this.population.get(i).getFitness());
         }
+    }
+
+
+    public static void sortByFitness(List<IChromosome> chromosomes) {
+        Collections.sort(chromosomes, (o1, o2) -> (int) (o1.getFitness() - o2.getFitness()));
     }
 }

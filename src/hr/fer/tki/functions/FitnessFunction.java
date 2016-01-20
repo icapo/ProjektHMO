@@ -14,7 +14,7 @@ public class FitnessFunction implements IFitnessFunction {
     public double calculate(IChromosome chromosome, TaskInfo taskInfo) {
 
         if(!ConstraintChecker.checkHardConstraints(chromosome, taskInfo)) {
-            return Double.MAX_VALUE;
+            return 99999999;
         }
 
         double shiftsOnRequests = 0;

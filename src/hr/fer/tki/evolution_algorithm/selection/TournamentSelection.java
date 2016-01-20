@@ -1,8 +1,8 @@
 package hr.fer.tki.evolution_algorithm.selection;
 
 import hr.fer.tki.evolution_algorithm.chromosome.IChromosome;
+import hr.fer.tki.evolution_algorithm.genetic.GeneticAlgorithm;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
@@ -16,14 +16,12 @@ public class TournamentSelection implements  ISelection{
     }
 
     @Override
-    public List<IChromosome> doSelection(List<IChromosome> chromosomes) {
+    public List<IChromosome> doSelection(List<IChromosome> chromosomes, int count) {
 
-        Collections.sort(chromosomes, (o1, o2) -> (int) (o1.getFitness() - o2.getFitness()));
-
+        GeneticAlgorithm.sortByFitness(chromosomes);
         List<IChromosome> solutions = new LinkedList<>();
 
-
-        for (int i = 0; i <= (this.percentage * chromosomes.size()); i++) {
+        for (int i = 0; i < count; i++) {
             solutions.add(chromosomes.get(i));
         }
 

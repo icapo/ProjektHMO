@@ -12,9 +12,9 @@ import hr.fer.tki.functions.FitnessFunction;
 public class Main1 {
 
 	public static void main(String[] args) {
-		int populationSize = 100;
+		int populationSize = 1000;
 		int bestSolutionsNum = 10;
-        int epochSize = 50;
+        int epochSize = 5;
 
 		double crossover = 0.6;
 
