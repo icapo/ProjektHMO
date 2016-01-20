@@ -12,15 +12,16 @@ import hr.fer.tki.functions.FitnessFunction;
 public class Main1 {
 
 	public static void main(String[] args) {
-		int populationSize = 1000;
+		int populationSize = 100;
 		int bestSolutionsNum = 10;
-        int epochSize = 5;
+        int epochSize = 30;
 
 		double crossover = 0.6;
+		double delta = 50;
 
 		TaskInfo taskInfo = TaskInfoParser.parse("sample.txt");
 		
-		GeneticAlgorithm GA = new GeneticAlgorithm(new FitnessFunction(), new Mutation(), new Crossover(crossover), new TournamentSelection(0.9) ,epochSize, 0, populationSize, taskInfo);
+		GeneticAlgorithm GA = new GeneticAlgorithm(new FitnessFunction(), new Mutation(), new Crossover(crossover), new TournamentSelection(0.9) ,epochSize, delta, populationSize, taskInfo);
         GA.startTraining();
 		System.out.println("Population generated");
 		List<IChromosome> bestSolutions = GA.getBestSolutions(bestSolutionsNum);

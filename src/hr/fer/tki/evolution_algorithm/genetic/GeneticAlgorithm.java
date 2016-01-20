@@ -21,13 +21,13 @@ public class GeneticAlgorithm {
     private IChromosome startChromosome;
     private boolean binaryType;
     private List<IChromosome> population;
-    private double precision;
+    private double delta;
     private TaskInfo taskInfo;
 
 
     public GeneticAlgorithm(IFitnessFunction fitnessFunction,
                             IMutation mutation, ICrossover crossover, ISelection selection, int epochNum,
-                            double precision, int populationSize, TaskInfo taskInfo) {
+                            double delta, int populationSize, TaskInfo taskInfo) {
         super();
         this.mutation = mutation;
         this.crossover = crossover;
@@ -35,7 +35,7 @@ public class GeneticAlgorithm {
         this.epochNum = epochNum;
         this.fitnessFunction = fitnessFunction;
         this.binaryType = binaryType;
-        this.precision = precision;
+        this.delta = delta;
         this.taskInfo = taskInfo;
         this.populationSize = populationSize;
 
@@ -48,7 +48,7 @@ public class GeneticAlgorithm {
      * @return
      */
     public List<IChromosome> getBestSolutions(int num) {
-        List<IChromosome> solutions = new ArrayList<>();
+        List<IChromosome> solutions = new LinkedList<>();
 
         for (int i = 0; i < num; i++) {
             solutions.add(this.population.get(i));
@@ -78,16 +78,17 @@ public class GeneticAlgorithm {
      * Method starts training genetic algorithm
      */
     public void startTraining() {
-        this.population = PopulationGenerator.generateStartingPopulation(populationSize, taskInfo);
+        this.population = PopulationGenerator.generateStartingPopulation(populationSize * 10, taskInfo);
         this.evaluatePopulation(this.population);
-        sortByFitness(this.population);
+        this.population = this.selection.doSelection(this.population, this.populationSize);
 
         List<IChromosome> currentPopulation = this.population;
 
         System.out.println("Starting population BEST:---- ");
-        System.out.println(currentPopulation.get(0).getFitness()+","+currentPopulation.get(1).getFitness()+","+currentPopulation.get(2).getFitness());
+        System.out.println(currentPopulation.get(0).getFitness() + "," + currentPopulation.get(1).getFitness() + "," + currentPopulation.get(2).getFitness());
         System.out.println();
 
+        double lastSolution = 89999999;
         for (int i = 0; i < this.epochNum; i++) {
 
             int populationSize = currentPopulation.size();
@@ -95,25 +96,25 @@ public class GeneticAlgorithm {
             List<IChromosome> newPopulation = new LinkedList<>();
 
             double minFitness = 89999999;
+
             for (int j = 0; j < populationSize - 1; j++) {
-                for (int k = j+1; k < populationSize; k++) {
+                for (int k = j + 1; k < populationSize; k++) {
 
                     IChromosome chromosome1 = currentPopulation.get(j);
                     IChromosome chromosome2 = currentPopulation.get(k);
-                    List<IChromosome>  result = this.crossover.crossover(chromosome1, chromosome2);
+                    List<IChromosome> result = this.crossover.crossover(chromosome1, chromosome2);
 
                     for (IChromosome c : result) {
-                        if(c == null) {
+                        if (c == null) {
                             continue;
                         }
-                        if(!ConstraintChecker.checkHardConstraints(c, this.taskInfo)) {
+                        if (!ConstraintChecker.checkHardConstraints(c, this.taskInfo)) {
                             continue;
                         }
                         double fitness = this.fitnessFunction.calculate(c, this.taskInfo);
-                        if(fitness < minFitness) {
+                        if (fitness < minFitness) {
                             minFitness = fitness;
                         }
-                        System.out.println("dfasafdsfdasfdasfadsdfadsfjdhsfkjadshfkjds: " + fitness);
 
                         c.setFitness(fitness);
                         newPopulation.add(c);
@@ -129,8 +130,13 @@ public class GeneticAlgorithm {
             //try mutating some of the population - like 3% of population
 
             currentPopulation = this.selection.doSelection(currentPopulation, this.populationSize);
-            System.out.println("Number: "+ i +" population BEST GENERATED:---- " + minFitness);
-            System.out.println(currentPopulation.get(0).getFitness()+","+currentPopulation.get(1).getFitness()+","+currentPopulation.get(2).getFitness());
+            System.out.println("Number: " + i + " population BEST GENERATED:---- " + minFitness);
+            System.out.println(currentPopulation.get(0).getFitness() + "," + currentPopulation.get(1).getFitness() + "," + currentPopulation.get(2).getFitness());
+
+            if (Math.abs(lastSolution - minFitness) < this.delta) {
+                break;
+            }
+            lastSolution = minFitness;
 
         }
 

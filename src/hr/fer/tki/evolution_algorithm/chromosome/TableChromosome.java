@@ -41,6 +41,11 @@ public class TableChromosome implements IChromosome {
 	}
 
 	@Override
+	public void setChromosomeRow(int row, Object[] data) {
+		this.data[row] = (String[]) data;
+	}
+
+	@Override
 	public Object getChromosomeColumn(int column) {
 		String[] result = new String[this.data.length];
 		for(int i = 0; i < this.data.length; i++) {
