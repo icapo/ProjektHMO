@@ -89,34 +89,49 @@ public class GeneticAlgorithm {
         this.population = PopulationGenerator.generateStartingPopulation(populationSize, taskInfo);
         this.evaluatePopulation(this.population);
 
-        List<IChromosome> currentPopulation = this.selection.doSelection(this.population);
-
+        List<IChromosome> currentPopulation = this.population;
 
         System.out.println("First population ---- ");
         for (int i = 0; i < currentPopulation.size(); i++) {
             System.out.println(currentPopulation.get(i).getFitness());
         }
 
-        for (int i = 0; i < this.epochNum; i++) {
-            List<IChromosome> nextPopulation = new LinkedList<>();
-            for (int j = 0; j < currentPopulation.size(); j++) {
-                IChromosome chromosome = currentPopulation.get(j);
-                //TODO: do crossover
+        Random r = new Random();
 
-                IChromosome mutated = this.mutation.copyMutate(chromosome);
-                this.evaluateChromosome(mutated);
-                if(mutated.getFitness() > 500000) {
-                }else {
-                    System.out.println("AaAaaaaaaaaadsfaadsfdasfdfdsdfasdfsdfsadfsa mutation");
+        for (int i = 0; i < this.epochNum; i++) {
+
+            int populationSize = currentPopulation.size();
+
+            List<IChromosome> newPopulation = new LinkedList<>();
+
+            for (int j = 1; j <= 0.1 * populationSize; j++) {
+                IChromosome chromosome1 = currentPopulation.get(r.nextInt(populationSize));
+                IChromosome chromosome2 = currentPopulation.get(r.nextInt(populationSize));
+                List<IChromosome>  result = this.crossover.crossover(chromosome1, chromosome2);
+
+                for (IChromosome c : result) {
+                    double fitness = this.fitnessFunction.calculate(c, this.taskInfo);
+                    if(fitness > 500000){
+                        continue;
+                    }else {
+                        System.out.println("dfasafdsfdasfdasfadsdfadsfjdhsfkjadshfkjds: " + fitness);
+                    }
+                    c.setFitness(fitness);
+                    newPopulation.add(c);
                 }
-                nextPopulation.add(mutated);
             }
-            for (IChromosome c : nextPopulation) {
+
+            for (IChromosome c : newPopulation) {
                 currentPopulation.add(c);
             }
+            newPopulation.clear();
+
+            //try mutating some of the population - like 3% of population
+
             currentPopulation = this.selection.doSelection(currentPopulation);
 
         }
+
         this.population = currentPopulation;
         System.out.println("ENDING population ---- ");
         for (int i = 0; i < this.population.size(); i++) {

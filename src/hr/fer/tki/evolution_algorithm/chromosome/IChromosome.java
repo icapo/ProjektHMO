@@ -20,4 +20,6 @@ public interface IChromosome {
 	Object getChromosomeRow(int row);
 
 	Object getChromosomeColumn(int column);
+
+	void setChromosomeColumn(int column, Object[] data);
 }

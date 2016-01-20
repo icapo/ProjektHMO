@@ -1,5 +1,6 @@
 import java.util.List;
 
+import hr.fer.tki.evolution_algorithm.crossover.Crossover;
 import hr.fer.tki.evolution_algorithm.genetic.GeneticAlgorithm;
 import hr.fer.tki.evolution_algorithm.chromosome.IChromosome;
 import hr.fer.tki.evolution_algorithm.mutation.Mutation;
@@ -11,13 +12,15 @@ import hr.fer.tki.functions.FitnessFunction;
 public class Main1 {
 
 	public static void main(String[] args) {
-		int populationSize = 90;
+		int populationSize = 100;
 		int bestSolutionsNum = 10;
-        int epochSize = 10;
+        int epochSize = 50;
+
+		double crossover = 0.6;
 
 		TaskInfo taskInfo = TaskInfoParser.parse("sample.txt");
 		
-		GeneticAlgorithm GA = new GeneticAlgorithm(new FitnessFunction(), new Mutation(), null, new TournamentSelection(populationSize) ,epochSize, 0, populationSize, taskInfo);
+		GeneticAlgorithm GA = new GeneticAlgorithm(new FitnessFunction(), new Mutation(), new Crossover(crossover), new TournamentSelection(0.9) ,epochSize, 0, populationSize, taskInfo);
         GA.startTraining();
 		System.out.println("Population generated");
 		List<IChromosome> bestSolutions = GA.getBestSolutions(bestSolutionsNum);
