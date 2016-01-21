@@ -2,10 +2,18 @@ package hr.fer.tki.evolution_algorithm.mutation;
 
 
 import hr.fer.tki.evolution_algorithm.chromosome.IChromosome;
+import hr.fer.tki.evolution_algorithm.task_info.TaskInfo;
+import hr.fer.tki.functions.ConstraintChecker;
 
 import java.util.Random;
 
 public class Mutation implements IMutation {
+
+    private TaskInfo taskInfo;
+
+    public Mutation(TaskInfo taskInfo) {
+        this.taskInfo = taskInfo;
+    }
 
     @Override
     public IChromosome copyMutate(IChromosome chrom) {
@@ -13,20 +21,41 @@ public class Mutation implements IMutation {
     }
 
     @Override
-    public IChromosome mutate(IChromosome chrom) {
+    public IChromosome mutate(IChromosome chromosome) {
 
         Random random = new Random();
-        int cols = chrom.getColsNum();
-        int rows = chrom.getRowsNum();
 
-        for (int j = 0; j < chrom.getColsNum(); j++) {
+        if (random.nextFloat() < 0.1) {
+            IChromosome chrom = chromosome.copy();
+            boolean mutationHappened = false;
+
+            int cols = chromosome.getColsNum();
             for (int i = 0; i < chrom.getRowsNum(); i++) {
-                if (random.nextFloat() < 0.005) {
-                    String element = (String) chrom.getChromosomeElement(i, j);
-                    chrom.setChromosomeElement(j % rows, i % cols, element);
+                int first = random.nextInt(cols);
+                int second = random.nextInt(cols);
+
+                String firstElement = (String) chrom.getChromosomeElement(i, first);
+                String secondElement = (String) chrom.getChromosomeElement(i, second);
+
+                chrom.setChromosomeElement(i, first, secondElement);
+                chrom.setChromosomeElement(i, second, firstElement);
+
+                if (!ConstraintChecker.checkHardConstraints(chrom, this.taskInfo)) {
+                    chrom.setChromosomeElement(i, first, firstElement);
+                    chrom.setChromosomeElement(i, second, secondElement);
+                } else {
+                    mutationHappened = true;
                 }
             }
+
+            if (mutationHappened) {
+                return chrom;
+            } else {
+                return null;
+            }
+
+        } else {
+            return null;
         }
-        return chrom;
     }
 }

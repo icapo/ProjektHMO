@@ -88,7 +88,6 @@ public class GeneticAlgorithm {
         System.out.println(currentPopulation.get(0).getFitness() + "," + currentPopulation.get(1).getFitness() + "," + currentPopulation.get(2).getFitness());
         System.out.println();
 
-        double lastSolution = 89999999;
         for (int i = 0; i < this.epochNum; i++) {
 
             int populationSize = currentPopulation.size();
@@ -97,6 +96,10 @@ public class GeneticAlgorithm {
 
             double minFitness = 89999999;
 
+            /***
+             * CROSSOVER
+             * Cross over off all units in population
+             */
             for (int j = 0; j < populationSize - 1; j++) {
                 for (int k = j + 1; k < populationSize; k++) {
 
@@ -121,22 +124,38 @@ public class GeneticAlgorithm {
                     }
                 }
             }
-
             for (IChromosome c : newPopulation) {
                 currentPopulation.add(c);
             }
             newPopulation.clear();
 
-            //try mutating some of the population - like 3% of population
+            /***
+             *
+             * MUTATION
+             */
+        double minFitnessMutation = 8999999;
+            //try mutating some of the population
+            for(IChromosome c : currentPopulation) {
+                IChromosome chromosome = this.mutation.mutate(c);
+                if(chromosome == null) {
+                    continue;
+                }
+                double fitness = this.fitnessFunction.calculate(chromosome, this.taskInfo);
+                if(fitness < minFitnessMutation) {
+                    minFitnessMutation = fitness;
+                }
+                chromosome.setFitness(fitness);
+                newPopulation.add(chromosome);
+            }
+            for (IChromosome c : newPopulation) {
+                currentPopulation.add(c);
+            }
+            newPopulation.clear();
+
 
             currentPopulation = this.selection.doSelection(currentPopulation, this.populationSize);
-            System.out.println("Number: " + i + " population BEST GENERATED:---- " + minFitness);
+            System.out.println("Number: " + i + " population BEST GENERATED:--Crossover: " + minFitness + " mutation:" + minFitnessMutation);
             System.out.println(currentPopulation.get(0).getFitness() + "," + currentPopulation.get(1).getFitness() + "," + currentPopulation.get(2).getFitness());
-
-            if (Math.abs(lastSolution - minFitness) < this.delta) {
-                break;
-            }
-            lastSolution = minFitness;
 
         }
 
