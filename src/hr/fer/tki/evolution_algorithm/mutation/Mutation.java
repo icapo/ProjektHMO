@@ -31,7 +31,7 @@ public class Mutation implements IMutation {
     private IChromosome mutateByDay(IChromosome chromosome) {
         Random random = new Random();
 
-        if (random.nextFloat() < 0.1) {
+        if (random.nextFloat() < this.mutationCofficient) {
 
             int cols = chromosome.getColsNum();
             for (int i = 0; i < chromosome.getRowsNum(); i++) {
