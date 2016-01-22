@@ -21,15 +21,7 @@ public class TournamentSelection implements  ISelection{
         GeneticAlgorithm.sortByFitness(chromosomes);
         List<IChromosome> solutions = new LinkedList<>();
 
-        solutions.add(chromosomes.get(0));
-        double lastFitness = chromosomes.get(0).getFitness();
-
-        for (int i = 1; i < count && i < chromosomes.size(); i++) {
-            if(lastFitness == chromosomes.get(i).getFitness()) {
-                count++;
-                continue;
-            }
-            lastFitness = chromosomes.get(i).getFitness();
+        for (int i = 0; i < count; i++) {
             solutions.add(chromosomes.get(i));
         }
 

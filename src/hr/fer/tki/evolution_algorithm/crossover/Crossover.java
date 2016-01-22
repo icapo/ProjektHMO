@@ -17,7 +17,16 @@ public class Crossover implements ICrossover {
 
     @Override
     public List<IChromosome> crossover(IChromosome chromosome1, IChromosome chromosome2) {
-        return this.doRowCrossover(chromosome1, chromosome2);
+        //do day switch
+        Random random = new Random();
+
+        double num = random.nextFloat();
+
+        if (num < this.coeff) {
+            return this.doRowCrossover(chromosome1.copy(), chromosome2.copy(), random);
+        }else {
+            return null;
+        }
     }
 
     private List<IChromosome> doColumnCrossover(IChromosome chromosome1, IChromosome chromosome2) {
@@ -47,15 +56,11 @@ public class Crossover implements ICrossover {
 
     }
 
-    private List<IChromosome> doRowCrossover(IChromosome chromosome1, IChromosome chromosome2) {
-        //do day switch
-        Random random = new Random();
+    private List<IChromosome> doRowCrossover(IChromosome chromosome1, IChromosome chromosome2, Random random) {
 
         List<IChromosome> list = new LinkedList<>();
-        double num = random.nextFloat();
 
-        if (num < this.coeff) {
-            int chromosome1RowsNum = chromosome1.getRowsNum();
+        int chromosome1RowsNum = chromosome1.getRowsNum();
             int chromosome2RowsNum = chromosome2.getRowsNum();
             int row1Index = random.nextInt(chromosome1RowsNum);
             int row2Index = random.nextInt(chromosome2RowsNum);
@@ -67,10 +72,6 @@ public class Crossover implements ICrossover {
             chromosome2.setChromosomeRow(row1Index, col1);
             list.add(chromosome1);
             list.add(chromosome2);
-        } else {
-            list.add(null);
-            list.add(null);
-        }
 
         //do repair if failed
         return list;

@@ -107,10 +107,11 @@ public class GeneticAlgorithm {
                     IChromosome chromosome2 = currentPopulation.get(k);
                     List<IChromosome> result = this.crossover.crossover(chromosome1, chromosome2);
 
+                    if (result == null) {
+                        continue;
+                    }
                     for (IChromosome c : result) {
-                        if (c == null) {
-                            continue;
-                        }
+
                         if (!ConstraintChecker.checkHardConstraints(c, this.taskInfo)) {
                             continue;
                         }
@@ -133,15 +134,15 @@ public class GeneticAlgorithm {
              *
              * MUTATION
              */
-        double minFitnessMutation = 8999999;
+            double minFitnessMutation = 8999999;
             //try mutating some of the population
-            for(IChromosome c : currentPopulation) {
+            for (IChromosome c : currentPopulation) {
                 IChromosome chromosome = this.mutation.mutate(c);
-                if(chromosome == null) {
+                if (chromosome == null) {
                     continue;
                 }
                 double fitness = this.fitnessFunction.calculate(chromosome, this.taskInfo);
-                if(fitness < minFitnessMutation) {
+                if (fitness < minFitnessMutation) {
                     minFitnessMutation = fitness;
                 }
                 chromosome.setFitness(fitness);
@@ -154,11 +155,11 @@ public class GeneticAlgorithm {
 
 
             currentPopulation = this.selection.doSelection(currentPopulation, this.populationSize);
-            System.out.println("Number: " + i + " population " +currentPopulation.size() +" BEST :--Crossover: " + minFitness + " mutation:" + minFitnessMutation);
+            System.out.println("Number: " + i + " population " + currentPopulation.size() + " BEST :--Crossover: " + minFitness + " mutation:" + minFitnessMutation);
             System.out.println(currentPopulation.get(0).getFitness() + ","
                     + currentPopulation.get(1).getFitness() + ","
                     + currentPopulation.get(2).getFitness() + " - "
-                    + currentPopulation.get(currentPopulation.size()-1).getFitness());
+                    + currentPopulation.get(currentPopulation.size() - 1).getFitness());
 
         }
 

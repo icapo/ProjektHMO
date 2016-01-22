@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 public class Shift implements Cloneable{
-	
+
+	private int id;
 	private String shiftID;
 	private int minutesLength;
 	private Map<String, Shift> cannotFollow;
@@ -96,4 +97,11 @@ public class Shift implements Cloneable{
 		return shift;
 	}
 
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
 }
