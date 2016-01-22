@@ -23,6 +23,10 @@ public class Mutation implements IMutation {
     @Override
     public IChromosome mutate(IChromosome chromosome) {
 
+        return this.mutateByDay(chromosome);
+    }
+
+    private IChromosome mutateByDay(IChromosome chromosome) {
         Random random = new Random();
 
         if (random.nextFloat() < 0.1) {
@@ -59,3 +63,4 @@ public class Mutation implements IMutation {
         }
     }
 }
+

@@ -34,7 +34,7 @@
 
 # IntelliJ
 /out/
-
+best/
 # mpeltonen/sbt-idea plugin
 .idea_modules/
 bin/

@@ -154,8 +154,11 @@ public class GeneticAlgorithm {
 
 
             currentPopulation = this.selection.doSelection(currentPopulation, this.populationSize);
-            System.out.println("Number: " + i + " population BEST GENERATED:--Crossover: " + minFitness + " mutation:" + minFitnessMutation);
-            System.out.println(currentPopulation.get(0).getFitness() + "," + currentPopulation.get(1).getFitness() + "," + currentPopulation.get(2).getFitness());
+            System.out.println("Number: " + i + " population " +currentPopulation.size() +" BEST :--Crossover: " + minFitness + " mutation:" + minFitnessMutation);
+            System.out.println(currentPopulation.get(0).getFitness() + ","
+                    + currentPopulation.get(1).getFitness() + ","
+                    + currentPopulation.get(2).getFitness() + " - "
+                    + currentPopulation.get(currentPopulation.size()-1).getFitness());
 
         }
 
