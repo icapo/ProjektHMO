@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ISelection {
 
-    public List<IChromosome> doSelection(List<IChromosome> chromosomes, int count);
+    public IChromosome doSelection(List<IChromosome> chromosomes);
 }

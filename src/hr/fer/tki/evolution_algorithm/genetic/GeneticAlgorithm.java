@@ -9,6 +9,7 @@ import hr.fer.tki.functions.ConstraintChecker;
 import hr.fer.tki.functions.IFitnessFunction;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GeneticAlgorithm {
 
@@ -78,84 +79,81 @@ public class GeneticAlgorithm {
      * Method starts training genetic algorithm
      */
     public void startTraining() {
-        this.population = PopulationGenerator.generateStartingPopulation(populationSize * 10, taskInfo);
+        //generate starting populataion
+        this.population = PopulationGenerator.generateStartingPopulation(this.populationSize * 10, taskInfo);
+        //evaluate starting population
         this.evaluatePopulation(this.population);
-        this.population = this.selection.doSelection(this.population, this.populationSize);
 
-        List<IChromosome> currentPopulation = this.population;
+        //sort starting population
+        GeneticAlgorithm.sortByFitness(this.population);
+        List<IChromosome> currentPopulation = new LinkedList<>();
+        currentPopulation.addAll(this.population.stream().collect(Collectors.toList()));
+
 
         System.out.println("Starting population BEST:---- ");
-        System.out.println(currentPopulation.get(0).getFitness() + "," + currentPopulation.get(1).getFitness() + "," + currentPopulation.get(2).getFitness());
+        System.out.println(currentPopulation.get(0).getFitness() + "," + currentPopulation.get(1).getFitness() +
+                "," + currentPopulation.get(currentPopulation.size() - 1).getFitness());
         System.out.println();
 
-        for (int i = 0; i < this.epochNum; i++) {
-
-            int populationSize = currentPopulation.size();
+        for (int epochNumber = 0; epochNumber < this.epochNum; epochNumber++) {
 
             List<IChromosome> newPopulation = new LinkedList<>();
 
             double minFitness = 89999999;
 
             /***
-             * CROSSOVER
-             * Cross over off all units in population
+             * Create new population
              */
-            for (int j = 0; j < populationSize - 1; j++) {
-                for (int k = j + 1; k < populationSize; k++) {
+            for (int i = 0; i < this.populationSize; i++) {
 
-                    IChromosome chromosome1 = currentPopulation.get(j);
-                    IChromosome chromosome2 = currentPopulation.get(k);
-                    List<IChromosome> result = this.crossover.crossover(chromosome1, chromosome2);
+                IChromosome chromosome1 = this.selection.doSelection(this.population);
+                IChromosome chromosome2 = this.selection.doSelection(this.population);
 
-                    if (result == null) {
+                /***
+                 * CROSSOVER
+                 */
+                List<IChromosome> result = this.crossover.crossover(chromosome1, chromosome2);
+
+                /**
+                 * Two chromosomes created by crossover
+                 */
+                for (IChromosome c : result) {
+
+                    if (!ConstraintChecker.checkHardConstraints(c, this.taskInfo)) {
+                        //check if ever happening
+                        System.out.println("HARD CONSTRAINTS VIOLATED BY CROSSOVER");
                         continue;
                     }
-                    for (IChromosome c : result) {
 
-                        if (!ConstraintChecker.checkHardConstraints(c, this.taskInfo)) {
-                            continue;
-                        }
-                        double fitness = this.fitnessFunction.calculate(c, this.taskInfo);
-                        if (fitness < minFitness) {
-                            minFitness = fitness;
-                        }
+                    /**
+                     * MUTATION
+                     */
+                    c = this.mutation.mutate(c);
 
-                        c.setFitness(fitness);
-                        newPopulation.add(c);
+                    /**
+                     * CALCULATE FITNESS
+                     */
+                    double fitness = this.fitnessFunction.calculate(c, this.taskInfo);
+                    if (fitness < minFitness) {
+                        minFitness = fitness;
                     }
+
+                    c.setFitness(fitness);
+                    newPopulation.add(c);
+
                 }
             }
-            for (IChromosome c : newPopulation) {
-                currentPopulation.add(c);
-            }
+            currentPopulation = currentPopulation.subList(0, (int) (0.1 * this.populationSize));
+            //add all new population to current population
+            currentPopulation.addAll(newPopulation.subList(0, (int) (0.9*this.populationSize)).stream().collect(Collectors.toList()));
             newPopulation.clear();
+            GeneticAlgorithm.sortByFitness(currentPopulation);
 
-            /***
-             *
-             * MUTATION
-             */
-            double minFitnessMutation = 8999999;
-            //try mutating some of the population
-            for (IChromosome c : currentPopulation) {
-                IChromosome chromosome = this.mutation.mutate(c);
-                if (chromosome == null) {
-                    continue;
-                }
-                double fitness = this.fitnessFunction.calculate(chromosome, this.taskInfo);
-                if (fitness < minFitnessMutation) {
-                    minFitnessMutation = fitness;
-                }
-                chromosome.setFitness(fitness);
-                newPopulation.add(chromosome);
-            }
-            for (IChromosome c : newPopulation) {
-                currentPopulation.add(c);
-            }
-            newPopulation.clear();
+            //get best population
+            currentPopulation = new LinkedList<>(currentPopulation.subList(0, this.populationSize));
 
 
-            currentPopulation = this.selection.doSelection(currentPopulation, this.populationSize);
-            System.out.println("Number: " + i + " population " + currentPopulation.size() + " BEST :--Crossover: " + minFitness + " mutation:" + minFitnessMutation);
+            System.out.println("Number: " + epochNumber + " population " + currentPopulation.size() + " BEST :--Crossover,mutation: " + minFitness);
             System.out.println(currentPopulation.get(0).getFitness() + ","
                     + currentPopulation.get(1).getFitness() + ","
                     + currentPopulation.get(2).getFitness() + " - "

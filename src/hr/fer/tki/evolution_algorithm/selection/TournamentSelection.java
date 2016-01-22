@@ -1,30 +1,51 @@
 package hr.fer.tki.evolution_algorithm.selection;
 
 import hr.fer.tki.evolution_algorithm.chromosome.IChromosome;
-import hr.fer.tki.evolution_algorithm.genetic.GeneticAlgorithm;
 
 import java.util.*;
 import java.util.List;
 
 
-public class TournamentSelection implements  ISelection{
+public class TournamentSelection implements ISelection {
 
-    private double percentage = 0.9;
+    private double probability = 0.5;
 
     public TournamentSelection(double percentage) {
-        this.percentage = percentage;
+        this.probability = percentage;
     }
 
     @Override
-    public List<IChromosome> doSelection(List<IChromosome> chromosomes, int count) {
+    public IChromosome doSelection(List<IChromosome> chromosomes) {
 
-        GeneticAlgorithm.sortByFitness(chromosomes);
-        List<IChromosome> solutions = new LinkedList<>();
+        Random random = new Random();
+        IChromosome solution = null;
 
-        for (int i = 0; i < count; i++) {
-            solutions.add(chromosomes.get(i));
+        double alpha = this.probability;
+        double step = (alpha - 0.005) / chromosomes.size();
+
+        for (int i = 0; i < chromosomes.size(); i++) {
+            /**
+             * Classical tournament
+             */
+//            alpha = this.probability * Math.pow(1 - this.probability, i);
+//            if (random.nextFloat() < alpha) {
+//                solution = chromosomes.get(i);
+//                break;
+//            }
+            /**
+             * Adjusted alpha
+             */
+            alpha = alpha - step;
+            if (random.nextFloat() < alpha) {
+                solution = chromosomes.get(i);
+                break;
+            }
         }
 
-        return solutions;
+
+        if (solution == null) {
+            solution = chromosomes.get(0);
+        }
+        return solution.copy();
     }
 }

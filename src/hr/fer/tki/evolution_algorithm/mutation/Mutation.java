@@ -10,9 +10,11 @@ import java.util.Random;
 public class Mutation implements IMutation {
 
     private TaskInfo taskInfo;
+    private double mutationCofficient;
 
-    public Mutation(TaskInfo taskInfo) {
+    public Mutation(TaskInfo taskInfo, double mutationCofficient) {
         this.taskInfo = taskInfo;
+        this.mutationCofficient = mutationCofficient;
     }
 
     @Override
@@ -22,7 +24,7 @@ public class Mutation implements IMutation {
 
     @Override
     public IChromosome mutate(IChromosome chromosome) {
-
+        //mutate but ignore invalid solution
         return this.mutateByDay(chromosome);
     }
 
@@ -30,37 +32,26 @@ public class Mutation implements IMutation {
         Random random = new Random();
 
         if (random.nextFloat() < 0.1) {
-            IChromosome chrom = chromosome.copy();
-            boolean mutationHappened = false;
 
             int cols = chromosome.getColsNum();
-            for (int i = 0; i < chrom.getRowsNum(); i++) {
+            for (int i = 0; i < chromosome.getRowsNum(); i++) {
                 int first = random.nextInt(cols);
                 int second = random.nextInt(cols);
 
-                String firstElement = (String) chrom.getChromosomeElement(i, first);
-                String secondElement = (String) chrom.getChromosomeElement(i, second);
+                String firstElement = (String) chromosome.getChromosomeElement(i, first);
+                String secondElement = (String) chromosome.getChromosomeElement(i, second);
 
-                chrom.setChromosomeElement(i, first, secondElement);
-                chrom.setChromosomeElement(i, second, firstElement);
+                chromosome.setChromosomeElement(i, first, secondElement);
+                chromosome.setChromosomeElement(i, second, firstElement);
 
-                if (!ConstraintChecker.checkHardConstraints(chrom, this.taskInfo)) {
-                    chrom.setChromosomeElement(i, first, firstElement);
-                    chrom.setChromosomeElement(i, second, secondElement);
-                } else {
-                    mutationHappened = true;
+                if (!ConstraintChecker.checkHardConstraints(chromosome, this.taskInfo)) {
+                    chromosome.setChromosomeElement(i, first, firstElement);
+                    chromosome.setChromosomeElement(i, second, secondElement);
                 }
             }
-
-            if (mutationHappened) {
-                return chrom;
-            } else {
-                return null;
-            }
-
-        } else {
-            return null;
         }
+        return chromosome;
+
     }
 }
 
