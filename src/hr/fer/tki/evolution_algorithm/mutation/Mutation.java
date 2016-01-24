@@ -32,21 +32,36 @@ public class Mutation implements IMutation {
         Random random = new Random();
 
         if (random.nextFloat() < this.mutationCofficient) {
-
+            int days = random.nextInt(6) + 1;
             int cols = chromosome.getColsNum();
+            //foreach person
             for (int i = 0; i < chromosome.getRowsNum(); i++) {
-                int first = random.nextInt(cols);
-                int second = random.nextInt(cols);
 
-                String firstElement = (String) chromosome.getChromosomeElement(i, first);
-                String secondElement = (String) chromosome.getChromosomeElement(i, second);
+                int first = 0;
+                int second = first + days - 1;
 
-                chromosome.setChromosomeElement(i, first, secondElement);
-                chromosome.setChromosomeElement(i, second, firstElement);
+                while (Math.abs(second - first) < days) {
+                    first = random.nextInt(cols / days);
+                    second = random.nextInt(cols / days);
+                }
+
+                for (int j = 0; j < days; j++) {
+
+                    String firstElement = (String) chromosome.getChromosomeElement(i, first + j);
+                    String secondElement = (String) chromosome.getChromosomeElement(i, second + j);
+
+                    chromosome.setChromosomeElement(i, first + j, secondElement);
+                    chromosome.setChromosomeElement(i, second + j, firstElement);
+                }
 
                 if (!ConstraintChecker.checkHardConstraints(chromosome, this.taskInfo)) {
-                    chromosome.setChromosomeElement(i, first, firstElement);
-                    chromosome.setChromosomeElement(i, second, secondElement);
+                    for (int j = 0; j < days; j++) {
+                        String firstElement = (String) chromosome.getChromosomeElement(i, first + j);
+                        String secondElement = (String) chromosome.getChromosomeElement(i, second + j);
+
+                        chromosome.setChromosomeElement(i, first + j, secondElement);
+                        chromosome.setChromosomeElement(i, second + j, firstElement);
+                    }
                 }
             }
         }

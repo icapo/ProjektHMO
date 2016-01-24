@@ -5,6 +5,7 @@ import hr.fer.tki.evolution_algorithm.crossover.ICrossover;
 import hr.fer.tki.evolution_algorithm.mutation.IMutation;
 import hr.fer.tki.evolution_algorithm.selection.ISelection;
 import hr.fer.tki.evolution_algorithm.task_info.TaskInfo;
+import hr.fer.tki.evolution_algorithm.task_info.TaskInfoParser;
 import hr.fer.tki.functions.ConstraintChecker;
 import hr.fer.tki.functions.IFitnessFunction;
 
@@ -83,7 +84,6 @@ public class GeneticAlgorithm {
         this.population = PopulationGenerator.generateStartingPopulation(this.populationSize * 10, taskInfo);
         //evaluate starting population
         this.evaluatePopulation(this.population);
-
         //sort starting population
         GeneticAlgorithm.sortByFitness(this.population);
         List<IChromosome> currentPopulation = new LinkedList<>();
@@ -104,7 +104,7 @@ public class GeneticAlgorithm {
             /***
              * Create new population
              */
-            for (int i = 0; i < this.populationSize; i++) {
+            for (int i = 0; i < this.populationSize * 5; i++) {
 
                 IChromosome chromosome1 = this.selection.doSelection(this.population);
                 IChromosome chromosome2 = this.selection.doSelection(this.population);
@@ -143,11 +143,12 @@ public class GeneticAlgorithm {
 
                 }
             }
+            GeneticAlgorithm.sortByFitness(currentPopulation);
+            GeneticAlgorithm.sortByFitness(newPopulation);
             currentPopulation = currentPopulation.subList(0, (int) (0.1 * this.populationSize));
             //add all new population to current population
             currentPopulation.addAll(newPopulation.subList(0, (int) (0.9*this.populationSize)).stream().collect(Collectors.toList()));
             newPopulation.clear();
-            GeneticAlgorithm.sortByFitness(currentPopulation);
 
             //get best population
             currentPopulation = new LinkedList<>(currentPopulation.subList(0, this.populationSize));

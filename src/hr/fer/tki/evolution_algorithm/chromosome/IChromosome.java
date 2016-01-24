@@ -7,6 +7,10 @@ public interface IChromosome {
 
     void setChromosomeElement(int row, int col, String value);
 
+    Object getChromosomeElement(int row, int col, boolean v);
+
+    void setChromosomeElement(int row, int col, String value, boolean v );
+
     public int getRowsNum();
 
     public int getColsNum();
