@@ -13,19 +13,6 @@ public class Main1 {
 
     public static void main(String[] args) {
 
-//        Runtime.getRuntime().addShutdownHook(new Thread() {
-//            public void run() {
-//                try {
-//                    Thread.sleep(200);
-//                    System.out.println("Shutting down ...");
-//                    //some cleaning up code...
-//
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        });
-
         int populationSize = 200;
         int bestSolutionsNum = 10;
         int epochSize = 500;
