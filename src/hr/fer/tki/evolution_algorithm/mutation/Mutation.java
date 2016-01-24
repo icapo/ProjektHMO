@@ -32,7 +32,7 @@ public class Mutation implements IMutation {
         Random random = new Random();
 
         if (random.nextFloat() < this.mutationCofficient) {
-            int days = random.nextInt(6) + 1;
+            int days = 7;
             int cols = chromosome.getColsNum();
             //foreach person
             for (int i = 0; i < chromosome.getRowsNum(); i++) {
@@ -64,6 +64,9 @@ public class Mutation implements IMutation {
                     }
                 }
             }
+        }
+        if(!ConstraintChecker.checkHardConstraints(chromosome, this.taskInfo)) {
+            System.out.println("not satisfying hard constraits");
         }
         return chromosome;
 
