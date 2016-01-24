@@ -163,10 +163,12 @@ public class GeneticAlgorithm {
         }
 
         this.population = currentPopulation;
+        sortByFitness(this.population);
         System.out.println("ENDING population ---- ");
         for (int i = 0; i < this.population.size(); i++) {
             System.out.println(this.population.get(i).getFitness());
         }
+
     }
 
 

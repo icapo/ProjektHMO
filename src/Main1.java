@@ -28,7 +28,7 @@ public class Main1 {
 
         int populationSize = 200;
         int bestSolutionsNum = 10;
-        int epochSize = 100;
+        int epochSize = 500;
 
         double mutation = 0.9;
         double delta = 50;
